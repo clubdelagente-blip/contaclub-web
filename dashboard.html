@@ -53,6 +53,11 @@
       .activar-modal__sub { color: #9ca3af; }
       .activar-modal__close { color: #6b7280; }
     }
+    /* <summary> es un elemento nativo "interactivo" (abre/cierra su
+       <details>) -- en algunos navegadores/sistemas con modo de colores
+       forzados o alto contraste, el navegador le pone SU PROPIO color por
+       encima de cualquier CSS normal, inline incluido. Esto lo fuerza. */
+    summary { color: var(--tinta) !important; forced-color-adjust: none; }
   </style>
 </head>
 <body>
