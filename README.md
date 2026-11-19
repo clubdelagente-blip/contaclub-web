@@ -52,6 +52,9 @@ de todo el bootstrap del dashboard de miembro del Club.
 
 ## Al tocar algo del repo principal que esto usa
 
-Si cambia `dashboard.js`, `carta.js`, `carta.css` o `styles.css` en
-`el-club-de-la-gente` y se sube un `?v=` nuevo, hay que actualizar esa
-misma versión acá (`dashboard.html`, `Carta.html`) en un commit aparte.
+Si cambia `dashboard.js`, `carta.js`, `carta.css`, `styles.css`,
+`estilos.css` o `dashboard.css` en `el-club-de-la-gente` y se sube un `?v=`
+nuevo, hay que actualizar esa misma versión acá (`dashboard.html` carga
+las tres hojas de estilo de Perfil.html -- `styles.css`/`estilos.css`/
+`dashboard.css`, no solo la primera; `Carta.html` solo carga `styles.css`/
+`carta.css`) en un commit aparte.
