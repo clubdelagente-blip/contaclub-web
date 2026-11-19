@@ -7,11 +7,11 @@
   <meta name="theme-color" content="#095544">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <!-- Mismo CSS/JS que usa El Club de la Gente para su carta, cargado
        cruzado -- cero lógica duplicada. Ver README.md del repo. -->
   <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=142">
-  <link rel="stylesheet" href="https://elclubdelagente.com/carta.css?v=26">
+  <link rel="stylesheet" href="https://elclubdelagente.com/carta.css?v=27">
 </head>
 <body>
   <div id="fondo-fijo" aria-hidden="true"></div>
@@ -21,23 +21,20 @@
     <p>Este negocio todavía no tiene su carta lista.</p>
   </div>
 
+  <!-- Sin header fijo a propósito -- mismo diseño que elclubdelagente.com/Carta.html. -->
   <div id="carta-chrome">
-    <header class="carta-top">
-      <div class="wrap">
-        <div class="carta-top__negocio">
-          <div class="carta-top__logo" id="carta-logo"></div>
-          <div style="flex:1;min-width:0">
-            <div class="carta-top__nombre" id="carta-nombre">Cargando…</div>
-            <div class="carta-top__sub">Carta digital · ContaClub</div>
-          </div>
-          <a href="#" target="_blank" rel="noopener" class="carta-top__ig" id="carta-instagram" hidden aria-label="Instagram del negocio">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-          </a>
-        </div>
-      </div>
-    </header>
-
-    <div class="wrap"><div class="carta-cat-pills" id="carta-cat-pills"></div></div>
+    <div class="wrap carta-cat-row">
+      <div class="carta-logo-badge" id="carta-logo" hidden></div>
+      <div class="carta-cat-pills" id="carta-cat-pills"></div>
+    </div>
+    <div class="wrap carta-util-row">
+      <span class="carta-mesa-pill" id="carta-mesa-indicador" hidden></span>
+      <a href="#" target="_blank" rel="noopener" class="carta-sigue-pill" id="carta-instagram" hidden>
+        <span class="carta-sigue-pill__dot"></span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        Síguenos
+      </a>
+    </div>
   </div>
 
   <div class="carta-foto-overlay" id="carta-foto-overlay" hidden>
@@ -215,6 +212,6 @@
     </div>
   </div>
 
-  <script type="module" src="https://elclubdelagente.com/carta.js?v=32"></script>
+  <script type="module" src="https://elclubdelagente.com/carta.js?v=33"></script>
 </body>
 </html>

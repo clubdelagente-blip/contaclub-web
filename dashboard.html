@@ -272,6 +272,17 @@
               </div>
             </div>
             <div class="cfg-campo">
+              <label class="cfg-label">Logo de tu negocio <span style="font-weight:400;color:var(--tinta-45)">(opcional)</span></label>
+              <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+                <img id="conta-carta-logo-preview" src="" alt="" style="width:56px;height:56px;object-fit:cover;border-radius:50%;border:1px solid var(--linea);background:#fff;display:none">
+                <div style="flex:1;min-width:180px">
+                  <input type="file" id="conta-carta-logo" accept="image/*">
+                  <input type="hidden" id="conta-carta-logo-url">
+                  <span style="font-size:12px;color:var(--tinta-45);display:block;margin-top:4px">Se ve en pequeño, flotando sobre la carta.</span>
+                </div>
+              </div>
+            </div>
+            <div class="cfg-campo">
               <label class="cfg-label">Color de acento</label>
               <div style="display:flex;gap:8px;align-items:center">
                 <input type="color" id="conta-carta-color" value="#095544" style="width:60px;height:38px;padding:2px;border:1px solid var(--linea-fuerte);border-radius:8px">
@@ -461,7 +472,7 @@
   <!-- Reusa 100% de la lógica de Mi Contabilidad de El Club de la Gente,
        cargada cruzado -- cero código duplicado. Mismo ?v= que use
        Perfil.html en cada momento. -->
-  <script type="module" src="https://elclubdelagente.com/dashboard.js?v=249"></script>
+  <script type="module" src="https://elclubdelagente.com/dashboard.js?v=250"></script>
 
   <!-- Red de seguridad propia de esta página: dashboard.js bloquea el
        scroll del body mientras hay un modal abierto (bloquearScroll/
