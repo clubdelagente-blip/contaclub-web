@@ -77,3 +77,14 @@ body { background: var(--crema); min-height: 100vh; }
    mismo tono que el fondo) -- misma estructura/ids, solo más "tarjeta". */
 .stat, .card { background: #fff; border-radius: 18px; box-shadow: 0 1px 3px rgba(2,27,26,.04); }
 .stat { padding: 20px; }
+
+/* Título de tarjeta en texto normal en vez de mayúsculas pequeñas
+   espaciadas -- mismo tratamiento que "Pedidos recientes"/"Carta y QR"
+   del mockup aprobado. */
+.card__title { font-size: 14.5px; font-weight: 700; letter-spacing: normal; text-transform: none; color: var(--tinta); }
+
+/* Botones secundarios (Descargar QR, Copiar link, + Agregar aviso) venían
+   con solo .btn, sin variante -- esa clase base no trae ni fondo ni borde
+   visible por sí sola (se apoya en --primario/--secundario/--ghost-verde
+   para eso), así que se veían como texto suelto. */
+.btn--secundario { background: #fff; }

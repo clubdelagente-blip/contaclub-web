@@ -213,14 +213,14 @@
           <div style="flex:1;min-width:220px">
             <p style="font-size:13px;color:var(--tinta-60);line-height:1.6;margin-bottom:10px">Imprime este código y ponlo en tus mesas o mostrador. Tus clientes lo escanean, escogen de tu carta y el pedido te llega aquí mismo.</p>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <a id="conta-carta-descargar" class="btn" download="carta-qr.png">Descargar QR</a>
-              <button class="btn" id="conta-carta-copiar" type="button">Copiar link</button>
+              <a id="conta-carta-descargar" class="btn btn--secundario" download="carta-qr.png">Descargar QR</a>
+              <button class="btn btn--secundario" id="conta-carta-copiar" type="button">Copiar link</button>
             </div>
           </div>
         </div>
 
         <details style="margin-bottom:16px">
-          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:15px;font-weight:700">Personalizar mi carta</summary>
+          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:15px;font-weight:700;color:var(--tinta)">Personalizar mi carta</summary>
           <div style="padding:14px 0 4px">
             <div style="margin-bottom:18px">
               <label class="cfg-label" style="margin-bottom:8px;display:block;text-align:center">Vista previa en vivo</label>
@@ -240,7 +240,7 @@
                 <div style="flex:1;min-width:180px">
                   <input type="file" id="conta-carta-llave-qr" accept="image/*">
                   <input type="hidden" id="conta-carta-llave-qr-url">
-                  <a id="conta-carta-llave-qr-descargar" class="btn" href="" download="qr-de-pago.png" style="display:none;margin-top:8px">Descargar QR</a>
+                  <a id="conta-carta-llave-qr-descargar" class="btn btn--secundario" href="" download="qr-de-pago.png" style="display:none;margin-top:8px">Descargar QR</a>
                   <span style="font-size:12px;color:var(--tinta-45);display:block;margin-top:4px">Si lo subes, tus clientes lo ven al elegir "Transferencia" y lo escanean directo desde su app del banco, en vez de copiar la llave a mano.</span>
                 </div>
               </div>
@@ -309,7 +309,7 @@
                 </div>
               </div>
               <div id="conta-carta-avisos-lista"></div>
-              <button class="btn" type="button" id="conta-carta-aviso-add" style="font-size:12.5px">+ Agregar aviso</button>
+              <button class="btn btn--secundario" type="button" id="conta-carta-aviso-add" style="font-size:12.5px">+ Agregar aviso</button>
               <span style="font-size:12px;color:var(--tinta-45);display:block;margin-top:8px">Si agregas más de uno, se ven como un carrusel que la gente puede deslizar.</span>
             </div>
 
@@ -336,7 +336,7 @@
         </details>
 
         <details class="card" style="margin-bottom:16px">
-          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700">Toppings y modificadores</summary>
+          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700;color:var(--tinta)">Toppings y modificadores</summary>
           <div style="padding:16px 0 4px">
             <p style="font-size:12.5px;color:var(--tinta-60);margin-bottom:14px">Arma grupos como "Salsas" o "Tamaño" una sola vez y pégalos a los productos que los necesiten desde su formulario.</p>
             <button class="btn btn--primario" id="conta-mod-grupo-add" type="button" style="margin-bottom:14px">+ Nuevo grupo</button>
@@ -345,7 +345,7 @@
         </details>
 
         <details class="card" style="margin-bottom:16px">
-          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700">Productos de mi carta</summary>
+          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700;color:var(--tinta)">Productos de mi carta</summary>
           <div style="padding:16px 0 4px">
             <p id="conta-carta-tipo-hint" hidden style="font-size:12.5px;color:var(--tinta-60);background:var(--crema-2);border-radius:8px;padding:10px 12px;margin-bottom:14px"></p>
             <button class="btn btn--primario" id="conta-carta-producto-add" type="button" style="margin-bottom:14px">+ Agregar producto</button>
@@ -354,7 +354,7 @@
         </details>
 
         <details class="card" id="conta-mesas-seccion" style="margin-bottom:16px">
-          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700">Mesas (pedidos compartidos)</summary>
+          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700;color:var(--tinta)">Mesas (pedidos compartidos)</summary>
           <div style="padding:16px 0 4px">
             <p style="font-size:12.5px;color:var(--tinta-60);margin-bottom:14px">Crea una mesa y pega su QR en ella -- todos los que lo escaneen arman su propio pedido, pero te llegan agrupados como uno solo en "Pedidos". Nadie paga individual: cobras la mesa completa cuando termina.</p>
             <button class="btn btn--primario" id="conta-mesa-add" type="button" style="margin-bottom:14px">+ Nueva mesa</button>
@@ -366,7 +366,7 @@
         <div id="conta-carta-pedidos-list" style="padding:4px 0"><span class="brand-loader"><img src="https://elclubdelagente.com/icon-club.png" alt=""></span></div>
 
         <details class="card" style="margin-top:16px">
-          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700">Comentarios de clientes</summary>
+          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700;color:var(--tinta)">Comentarios de clientes</summary>
           <div style="padding:16px 0 4px">
             <p style="font-size:12.5px;color:var(--tinta-60);margin-bottom:14px">Los clientes comentan tus productos desde la carta -- nadie los ve en público hasta que tú los apruebes acá.</p>
             <div id="conta-carta-comentarios-list"><span class="brand-loader"><img src="https://elclubdelagente.com/icon-club.png" alt=""></span></div>
