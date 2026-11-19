@@ -324,6 +324,13 @@
             </div>
 
             <div style="background:rgba(9,85,68,.08);border:1px solid rgba(9,85,68,.3);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--tinta-70)">
+                <input id="conta-carta-precio-desde" type="checkbox" style="width:16px;height:16px;accent-color:#095544">
+                🏷️ Mostrar precios como "Desde $..." y el botón "Elegir" siempre, incluso en productos sin toppings
+              </label>
+            </div>
+
+            <div style="background:rgba(9,85,68,.08);border:1px solid rgba(9,85,68,.3);border-radius:10px;padding:12px 14px;margin-bottom:14px">
               <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--tinta-70);margin-bottom:10px">
                 <input id="conta-carta-sellos-activo" type="checkbox" style="width:16px;height:16px;accent-color:#095544">
                 🎟️ Tarjeta de sellos para quien pide por la carta
@@ -479,7 +486,7 @@
   <!-- Reusa 100% de la lógica de Mi Contabilidad de El Club de la Gente,
        cargada cruzado -- cero código duplicado. Mismo ?v= que use
        Perfil.html en cada momento. -->
-  <script type="module" src="https://elclubdelagente.com/dashboard.js?v=258"></script>
+  <script type="module" src="https://elclubdelagente.com/dashboard.js?v=259"></script>
 
   <!-- Red de seguridad propia de esta página: dashboard.js bloquea el
        scroll del body mientras hay un modal abierto (bloquearScroll/
