@@ -58,3 +58,12 @@ nuevo, hay que actualizar esa misma versión acá (`dashboard.html` carga
 las tres hojas de estilo de Perfil.html -- `styles.css`/`estilos.css`/
 `dashboard.css`, no solo la primera; `Carta.html` solo carga `styles.css`/
 `carta.css`) en un commit aparte.
+
+**Ojo con esto**: `Perfil.html` también tiene un bloque `<style>` metido
+directo en el HTML (no en ningún `.css`), cerca del final del archivo --
+ahí viven `.activar-overlay`/`.activar-modal` (el modal genérico de Mi
+Contabilidad) y `.cfg-campo`/`.cfg-label`/`.cfg-input` (todos los campos
+de formulario). `dashboard.html` de este repo tiene una copia de esas
+reglas pegada en su propio `<head>`. Si ese bloque cambia en
+`Perfil.html`, hay que repetir el cambio acá a mano -- no se puede cargar
+cruzado porque no es un archivo aparte.

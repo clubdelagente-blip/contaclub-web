@@ -11,6 +11,49 @@
   <link rel="stylesheet" href="https://elclubdelagente.com/estilos.css?v=22">
   <link rel="stylesheet" href="https://elclubdelagente.com/dashboard.css?v=47">
   <link rel="stylesheet" href="app.css">
+  <!-- Estas clases NO viven en ningún .css externo -- van en un <style>
+       metido directo dentro de Perfil.html (ver ahí mismo, cerca del
+       final). Son las del modal genérico (#modal-tienda) y de TODOS los
+       campos de formulario (.cfg-campo/.cfg-label/.cfg-input) que usa Mi
+       Contabilidad -- sin esto, el popup de "¿Qué tipo de negocio
+       tienes?" se abre sin fijarse en pantalla (sin position:fixed) y
+       queda invisible pero bloqueando el scroll, y los inputs se ven sin
+       estilo. Copiado tal cual, sin las partes exclusivas de ClubCard. -->
+  <style>
+    .activar-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 900;
+      display: flex; align-items: flex-end; justify-content: center;
+      overflow-x: hidden; touch-action: pan-y;
+    }
+    @media (min-width: 600px) { .activar-overlay { align-items: center; } }
+    .activar-modal {
+      background: #fff; border-radius: 24px 24px 0 0; padding: 32px 24px 40px;
+      width: 100%; max-width: 480px; position: relative; text-align: center;
+      overflow-x: hidden; touch-action: pan-y;
+    }
+    @media (min-width: 600px) { .activar-modal { border-radius: 24px; padding: 40px 32px; } }
+    .activar-modal__close {
+      position: absolute; top: 14px; right: 16px;
+      background: none; border: none; font-size: 24px; color: #999; cursor: pointer; line-height: 1;
+    }
+    .activar-modal__title { font-family: 'Anton', sans-serif; font-size: 24px; font-weight: 700; color: #021B1A; margin: 0 0 8px; }
+    .activar-modal__sub { font-size: 14px; color: #666; line-height: 1.5; margin: 0 0 16px; }
+    #modal-tienda-box { color: #021B1A; }
+    .cfg-campo { margin-bottom: 14px; }
+    .cfg-label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 6px; }
+    .cfg-input {
+      width: 100%; padding: 10px 12px; border: 1px solid #ebebeb; border-radius: 10px;
+      font-family: 'Inter', sans-serif; font-size: 16px; background: #fff; color: #021B1A;
+      box-sizing: border-box;
+    }
+    textarea.cfg-input { resize: vertical; }
+    @media (prefers-color-scheme: dark) {
+      .activar-modal { background: #1c1c1e; }
+      .activar-modal__title { color: #f9fafb; }
+      .activar-modal__sub { color: #9ca3af; }
+      .activar-modal__close { color: #6b7280; }
+    }
+  </style>
 </head>
 <body>
   <header class="cc-dash-top">
