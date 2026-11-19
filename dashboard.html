@@ -211,22 +211,43 @@
     <div id="contasub-pedido" style="display:none">
       <button class="btn btn--primario" id="conta-nuevo-pedido-btn" type="button" style="margin-bottom:20px;width:100%;justify-content:center">🧾 Nuevo pedido</button>
 
-      <div class="card" style="margin-bottom:20px">
-        <div class="card__head"><span class="card__title">Mi carta digital (pedidos por QR)</span></div>
-        <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;padding:8px 0 16px">
-          <img id="conta-carta-qr" src="" alt="Código QR de tu carta" style="width:140px;height:140px;border-radius:10px;border:1px solid var(--linea)">
+      <div style="margin-bottom:6px">
+        <h2 style="font-family:var(--cuerpo);font-size:18px;font-weight:800;color:var(--tinta);margin:0">Mi carta digital</h2>
+        <p style="font-size:13px;color:var(--tinta-60);margin:3px 0 0">Tus clientes piden escaneando un código QR -- sin instalar nada.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="cc-qr-card">
+          <div class="cc-qr-box">
+            <img id="conta-carta-qr" src="" alt="Código QR de tu carta">
+          </div>
           <div style="flex:1;min-width:220px">
-            <p style="font-size:13px;color:var(--tinta-60);line-height:1.6;margin-bottom:10px">Imprime este código y ponlo en tus mesas o mostrador. Tus clientes lo escanean, escogen de tu carta y el pedido te llega aquí mismo.</p>
+            <span class="cc-estado"><span class="cc-estado__dot"></span>Carta activa</span>
+            <p style="font-size:13px;color:var(--tinta-60);line-height:1.6;margin:0 0 12px">Imprime este código y ponlo en tus mesas o mostrador. Tus clientes lo escanean, escogen de tu carta y el pedido te llega aquí mismo.</p>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <a id="conta-carta-descargar" class="btn btn--secundario" download="carta-qr.png">Descargar QR</a>
-              <button class="btn btn--secundario" id="conta-carta-copiar" type="button">Copiar link</button>
+              <a id="conta-carta-descargar" class="btn btn--secundario" download="carta-qr.png">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Descargar QR
+              </a>
+              <button class="btn btn--secundario" id="conta-carta-copiar" type="button">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copiar link
+              </button>
             </div>
           </div>
         </div>
+      </div>
 
-        <details style="margin-bottom:16px">
-          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:15px;font-weight:700;color:var(--tinta)">Personalizar mi carta</summary>
-          <div style="padding:14px 0 4px">
+      <details class="card cc-acc" style="margin-bottom:12px">
+          <summary>
+            <span class="cc-acc__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.5-.7 1.5-1.5 0-.4-.2-.8-.4-1.1-.2-.3-.4-.6-.4-1 0-.8.7-1.5 1.5-1.5H16c3.3 0 6-2.7 6-6 0-4.4-4.5-8-10-8z"/></svg></span>
+            <span class="cc-acc__text">
+              <span class="cc-acc__title">Personalizar mi carta</span>
+              <span class="cc-acc__desc">Colores, portada y configuración</span>
+            </span>
+            <svg class="cc-acc__chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </summary>
+          <div>
             <div style="margin-bottom:18px">
               <label class="cfg-label" style="margin-bottom:8px;display:block;text-align:center">Vista previa en vivo</label>
               <div style="max-width:300px;margin:0 auto;border:8px solid #021B1A;border-radius:28px;overflow:hidden;box-shadow:0 10px 30px -10px rgba(0,0,0,.35)">
@@ -340,44 +361,73 @@
           </div>
         </details>
 
-        <details class="card" style="margin-bottom:16px">
-          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700;color:var(--tinta)">Toppings y modificadores</summary>
-          <div style="padding:16px 0 4px">
+        <details class="card cc-acc" style="margin-bottom:12px">
+          <summary>
+            <span class="cc-acc__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></svg></span>
+            <span class="cc-acc__text">
+              <span class="cc-acc__title">Toppings y modificadores</span>
+              <span class="cc-acc__desc">Grupos de opciones reutilizables</span>
+            </span>
+            <svg class="cc-acc__chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </summary>
+          <div>
             <p style="font-size:12.5px;color:var(--tinta-60);margin-bottom:14px">Arma grupos como "Salsas" o "Tamaño" una sola vez y pégalos a los productos que los necesiten desde su formulario.</p>
             <button class="btn btn--primario" id="conta-mod-grupo-add" type="button" style="margin-bottom:14px">+ Nuevo grupo</button>
             <div id="conta-mod-grupos-list"><span class="brand-loader"><img src="https://elclubdelagente.com/icon-club.png" alt=""></span></div>
           </div>
         </details>
 
-        <details class="card" style="margin-bottom:16px">
-          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700;color:var(--tinta)">Productos de mi carta</summary>
-          <div style="padding:16px 0 4px">
+        <details class="card cc-acc" style="margin-bottom:12px">
+          <summary>
+            <span class="cc-acc__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span>
+            <span class="cc-acc__text">
+              <span class="cc-acc__title">Productos de mi carta</span>
+              <span class="cc-acc__desc">Tu catálogo completo</span>
+            </span>
+            <svg class="cc-acc__chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </summary>
+          <div>
             <p id="conta-carta-tipo-hint" hidden style="font-size:12.5px;color:var(--tinta-60);background:var(--crema-2);border-radius:8px;padding:10px 12px;margin-bottom:14px"></p>
             <button class="btn btn--primario" id="conta-carta-producto-add" type="button" style="margin-bottom:14px">+ Agregar producto</button>
             <div id="conta-carta-productos-list"><span class="brand-loader"><img src="https://elclubdelagente.com/icon-club.png" alt=""></span></div>
           </div>
         </details>
 
-        <details class="card" id="conta-mesas-seccion" style="margin-bottom:16px">
-          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700;color:var(--tinta)">Mesas (pedidos compartidos)</summary>
-          <div style="padding:16px 0 4px">
+        <details class="card cc-acc" id="conta-mesas-seccion" style="margin-bottom:12px">
+          <summary>
+            <span class="cc-acc__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+            <span class="cc-acc__text">
+              <span class="cc-acc__title">Mesas (pedidos compartidos)</span>
+              <span class="cc-acc__desc">QR por mesa, cuenta compartida</span>
+            </span>
+            <svg class="cc-acc__chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </summary>
+          <div>
             <p style="font-size:12.5px;color:var(--tinta-60);margin-bottom:14px">Crea una mesa y pega su QR en ella -- todos los que lo escaneen arman su propio pedido, pero te llegan agrupados como uno solo en "Pedidos". Nadie paga individual: cobras la mesa completa cuando termina.</p>
             <button class="btn btn--primario" id="conta-mesa-add" type="button" style="margin-bottom:14px">+ Nueva mesa</button>
             <div id="conta-mesas-list"><span class="brand-loader"><img src="https://elclubdelagente.com/icon-club.png" alt=""></span></div>
           </div>
         </details>
 
-        <div class="card__head" style="padding:0 0 10px"><span class="card__title">Pedidos</span></div>
-        <div id="conta-carta-pedidos-list" style="padding:4px 0"><span class="brand-loader"><img src="https://elclubdelagente.com/icon-club.png" alt=""></span></div>
+        <div class="card" style="margin-bottom:12px;padding-bottom:12px">
+          <div class="card__head"><span class="card__title">Pedidos</span></div>
+          <div id="conta-carta-pedidos-list" style="padding:4px 0"><span class="brand-loader"><img src="https://elclubdelagente.com/icon-club.png" alt=""></span></div>
+        </div>
 
-        <details class="card" style="margin-top:16px">
-          <summary style="cursor:pointer;font-family:'Anton',sans-serif;font-size:17px;font-weight:700;color:var(--tinta)">Comentarios de clientes</summary>
-          <div style="padding:16px 0 4px">
+        <details class="card cc-acc">
+          <summary>
+            <span class="cc-acc__ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+            <span class="cc-acc__text">
+              <span class="cc-acc__title">Comentarios de clientes</span>
+              <span class="cc-acc__desc">Modera lo que se publica</span>
+            </span>
+            <svg class="cc-acc__chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </summary>
+          <div>
             <p style="font-size:12.5px;color:var(--tinta-60);margin-bottom:14px">Los clientes comentan tus productos desde la carta -- nadie los ve en público hasta que tú los apruebes acá.</p>
             <div id="conta-carta-comentarios-list"><span class="brand-loader"><img src="https://elclubdelagente.com/icon-club.png" alt=""></span></div>
           </div>
         </details>
-      </div>
     </div>
 
         <!-- ---------- NUEVO GASTO ---------- -->
