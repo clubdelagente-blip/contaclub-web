@@ -11,7 +11,7 @@
   <!-- Mismo CSS/JS que usa El Club de la Gente para su carta, cargado
        cruzado -- cero lógica duplicada. Ver README.md del repo. -->
   <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=142">
-  <link rel="stylesheet" href="https://elclubdelagente.com/carta.css?v=27">
+  <link rel="stylesheet" href="https://elclubdelagente.com/carta.css?v=28">
 </head>
 <body>
   <div id="fondo-fijo" aria-hidden="true"></div>
@@ -24,7 +24,12 @@
   <!-- Sin header fijo a propósito -- mismo diseño que elclubdelagente.com/Carta.html. -->
   <div id="carta-chrome">
     <div class="wrap carta-cat-row">
-      <div class="carta-logo-badge" id="carta-logo" hidden></div>
+      <div class="carta-logo-col">
+        <div class="carta-logo-badge" id="carta-logo" hidden></div>
+        <button type="button" class="carta-grid-toggle" id="carta-grid-toggle" aria-label="Ver todos los productos en cuadrícula">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </button>
+      </div>
       <div class="carta-cat-pills" id="carta-cat-pills"></div>
     </div>
     <div class="wrap carta-util-row">
@@ -35,6 +40,17 @@
         Síguenos
       </a>
     </div>
+  </div>
+
+  <!-- Vista de cuadrícula: alterna a un catálogo tipo grilla (foto + precio)
+       de todos los productos, para elegir rápido sin pasar uno por uno por
+       el feed a pantalla completa. -->
+  <div class="carta-gridview-overlay" id="carta-gridview-overlay" hidden>
+    <div class="carta-gridview-head">
+      <span>Todos los productos</span>
+      <button type="button" id="carta-gridview-cerrar" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="carta-gridview-grid" id="carta-gridview-grid"></div>
   </div>
 
   <div class="carta-foto-overlay" id="carta-foto-overlay" hidden>
@@ -212,6 +228,6 @@
     </div>
   </div>
 
-  <script type="module" src="https://elclubdelagente.com/carta.js?v=33"></script>
+  <script type="module" src="https://elclubdelagente.com/carta.js?v=34"></script>
 </body>
 </html>
