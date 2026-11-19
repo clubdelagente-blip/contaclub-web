@@ -34,8 +34,46 @@ body { background: var(--crema); min-height: 100vh; }
 .cc-hero h1 { font-family: var(--display); font-size: clamp(28px,7vw,40px); color: var(--tinta); margin: 0 0 14px; line-height: 1.1; }
 .cc-hero p { font-size: 15px; color: var(--tinta-60); max-width: 44ch; margin: 0 auto 28px; line-height: 1.55; }
 
-/* ---------- Dashboard shell ---------- */
-.cc-dash-top { background: #fff; border-bottom: 1px solid var(--linea); padding: 16px 0; }
-.cc-dash-top__inner { max-width: 720px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.cc-dash-top__nombre { font-family: var(--display); font-size: 16px; font-weight: 700; color: var(--tinta); }
-.cc-dash-body { max-width: 720px; margin: 0 auto; padding: 24px 20px 60px; }
+/* ---------- Dashboard shell: barra lateral + contenido ----------
+   #contaclub-root (dentro de <main>) sigue siendo el mismo contenedor que
+   dashboard.js reconoce y llena -- acá solo se rediseña el "chrome"
+   alrededor (sidebar, topbar) y se le da más aire a .stat/.card, que ya
+   vienen con su propio estilo base de dashboard.css (ícono + número +
+   etiqueta) -- esto los redondea más y los pasa a blanco puro para que
+   se noten como tarjetas sobre el fondo, no solo por el borde. */
+.cc-app { display: flex; min-height: 100vh; align-items: stretch; }
+
+.cc-sidebar { width: 252px; flex: none; background: #fff; border-right: 1px solid var(--linea); padding: 28px 20px; display: flex; flex-direction: column; }
+.cc-sidebar__brand { display: flex; align-items: center; gap: 10px; margin-bottom: 34px; padding: 0 4px; min-width: 0; }
+.cc-sidebar__logo { width: 34px; height: 34px; border-radius: 10px; background: var(--verde); display: flex; align-items: center; justify-content: center; flex: none; }
+.cc-sidebar__nombre { font-family: var(--display); font-size: 17px; color: var(--tinta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cc-sidebar__label { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--tinta-45); text-transform: uppercase; margin: 0 4px 10px; }
+.cc-sidebar__nav { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
+.cc-nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 12px; border: none; background: none; color: var(--tinta-60); font-weight: 600; font-size: 14px; font-family: var(--cuerpo); cursor: pointer; text-align: left; width: 100%; transition: background .15s, color .15s; }
+.cc-nav-item:hover:not(.is-on) { background: var(--crema-2); color: var(--tinta); }
+.cc-nav-item.is-on { background: var(--verde-soft); color: var(--verde); font-weight: 700; }
+.cc-nav-item svg { flex: none; }
+.cc-sidebar__spacer { flex: 1; }
+.cc-sidebar__nav--foot { border-top: 1px solid var(--linea); padding-top: 14px; margin-bottom: 0; }
+
+.cc-main { flex: 1; min-width: 0; padding: 28px 36px 60px; }
+.cc-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; gap: 16px; flex-wrap: wrap; }
+.cc-topbar__title { font-family: var(--display); font-size: 24px; color: var(--tinta); margin: 0; }
+.cc-topbar__sub { margin: 4px 0 0; font-size: 13px; color: var(--tinta-60); }
+
+@media (max-width: 860px) {
+  .cc-app { flex-direction: column; }
+  .cc-sidebar { width: 100%; flex-direction: row; align-items: center; gap: 14px; padding: 14px 16px; border-right: none; border-bottom: 1px solid var(--linea); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .cc-sidebar__brand { margin-bottom: 0; flex: none; }
+  .cc-sidebar__label { display: none; }
+  .cc-sidebar__nav { flex-direction: row; margin-bottom: 0; }
+  .cc-nav-item { white-space: nowrap; }
+  .cc-sidebar__spacer { display: none; }
+  .cc-sidebar__nav--foot { border-top: none; padding-top: 0; }
+  .cc-main { padding: 20px 16px 40px; }
+}
+
+/* Tarjetas más redondeadas y en blanco puro (dashboard.css las deja del
+   mismo tono que el fondo) -- misma estructura/ids, solo más "tarjeta". */
+.stat, .card { background: #fff; border-radius: 18px; box-shadow: 0 1px 3px rgba(2,27,26,.04); }
+.stat { padding: 20px; }

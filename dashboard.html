@@ -56,27 +56,61 @@
   </style>
 </head>
 <body>
-  <header class="cc-dash-top">
-    <div class="cc-dash-top__inner">
-      <span class="cc-dash-top__nombre" id="contaclub-negocio-nombre">Cargando…</span>
-      <button type="button" class="btn" id="contaclub-salir" style="padding:8px 14px;font-size:12.5px">Salir</button>
-    </div>
-  </header>
+  <div class="cc-app">
+    <!-- Barra lateral: el nav real sigue siendo #contasub-nav con botones
+         data-contasub -- dashboard.js ya sabe mostrar/ocultar #contasub-
+         balance/pedido/gasto con eso (ver cargarContabilidadNegocio), acá
+         solo cambia dónde vive y cómo se ve. -->
+    <aside class="cc-sidebar">
+      <div class="cc-sidebar__brand">
+        <span class="cc-sidebar__logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+        </span>
+        <span class="cc-sidebar__nombre" id="contaclub-negocio-nombre">Cargando…</span>
+      </div>
 
-  <!-- Copia exacta de #negtab-contabilidad de Perfil.html (El Club de la
-       Gente) -- mismos ids, porque dashboard.js (cargado cruzado) los
-       referencia tal cual. iniciarContaClubDashboard() en dashboard.js
-       reconoce esta página por el id "contaclub-root" y llama directo a
-       cargarContabilidadNegocio(), sin el bootstrap del dashboard de
-       miembro del Club. -->
-  <div id="contaclub-root" class="cc-dash-body">
-    <div class="seg-opts" style="margin-bottom:22px" id="contasub-nav">
-      <button class="seg-opt is-on" data-contasub="balance" type="button">📊 Balance</button>
-      <button class="seg-opt" data-contasub="pedido" type="button">🧾 Nuevo pedido</button>
-      <button class="seg-opt" data-contasub="gasto" type="button">➖ Nuevo gasto</button>
-    </div>
+      <div class="cc-sidebar__label">Mi Contabilidad</div>
+      <nav class="cc-sidebar__nav" id="contasub-nav">
+        <button class="cc-nav-item is-on" data-contasub="balance" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
+          Balance
+        </button>
+        <button class="cc-nav-item" data-contasub="pedido" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Nuevo pedido
+        </button>
+        <button class="cc-nav-item" data-contasub="gasto" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></svg>
+          Nuevo gasto
+        </button>
+      </nav>
 
-    <!-- ---------- BALANCE ---------- -->
+      <div class="cc-sidebar__spacer"></div>
+      <nav class="cc-sidebar__nav cc-sidebar__nav--foot">
+        <button type="button" class="cc-nav-item" id="contaclub-salir">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          Salir
+        </button>
+      </nav>
+    </aside>
+
+    <main class="cc-main">
+      <div class="cc-topbar">
+        <div>
+          <h1 class="cc-topbar__title">Mi Contabilidad</h1>
+          <p class="cc-topbar__sub">Cómo le está yendo a tu negocio</p>
+        </div>
+      </div>
+
+      <!-- Copia exacta de #negtab-contabilidad de Perfil.html (El Club de la
+           Gente) -- mismos ids, porque dashboard.js (cargado cruzado) los
+           referencia tal cual. iniciarContaClubDashboard() en dashboard.js
+           reconoce esta página por el id "contaclub-root" y llama directo a
+           cargarContabilidadNegocio(), sin el bootstrap del dashboard de
+           miembro del Club. -->
+      <div id="contaclub-root">
+
+        <!-- ---------- BALANCE ---------- -->
     <div id="contasub-balance">
       <div class="seg-opts" style="margin-bottom:14px" id="conta-periodo-filtro">
         <button class="seg-opt" data-periodo="dia" type="button" style="padding:7px 14px;font-size:12.5px">Día</button>
@@ -341,11 +375,13 @@
       </div>
     </div>
 
-    <!-- ---------- NUEVO GASTO ---------- -->
-    <div id="contasub-gasto" style="display:none">
-      <button class="btn btn--primario" id="conta-gasto-add" type="button" style="margin-bottom:14px;width:100%;justify-content:center">➖ Nuevo gasto</button>
-      <p style="font-size:12.5px;color:var(--tinta-45);text-align:center">El historial completo de gastos está en la pestaña Balance.</p>
-    </div>
+        <!-- ---------- NUEVO GASTO ---------- -->
+        <div id="contasub-gasto" style="display:none">
+          <button class="btn btn--primario" id="conta-gasto-add" type="button" style="margin-bottom:14px;width:100%;justify-content:center">➖ Nuevo gasto</button>
+          <p style="font-size:12.5px;color:var(--tinta-45);text-align:center">El historial completo de gastos está en la pestaña Balance.</p>
+        </div>
+      </div>
+    </main>
   </div>
 
   <!-- Modal genérico que dashboard.js reusa para TODOS los formularios de
