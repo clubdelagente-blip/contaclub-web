@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear cuenta — ContaClub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=142">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="cc-wrap">
+    <a href="index.html" class="cc-brand" style="text-decoration:none">Conta<span>Club</span></a>
+    <div class="cc-card">
+      <div id="registro-wrap">
+        <h1>Crea tu cuenta</h1>
+        <p class="cc-sub">Sin pasar por ninguna membresía -- tu carta digital y tu contabilidad, listas en minutos.</p>
+        <p class="cc-error" id="reg-error" hidden></p>
+        <form id="registro-form">
+          <div class="cc-campo"><label>Nombre del negocio *</label><input id="reg-nombre" type="text" placeholder="Ej: Pizzería Luna" required></div>
+          <div class="cc-campo"><label>Categoría</label><input id="reg-categoria" type="text" placeholder="Ej: Restaurante, Heladería..."></div>
+          <div class="cc-campo"><label>WhatsApp</label><input id="reg-whatsapp" type="tel" placeholder="300 000 0000"></div>
+          <div class="cc-campo"><label>Correo *</label><input id="reg-email" type="email" required></div>
+          <div class="cc-campo"><label>Contraseña *</label><input id="reg-pass" type="password" minlength="6" required></div>
+          <button type="submit" class="btn btn--primario" id="reg-btn" style="width:100%;justify-content:center;margin-top:4px">Crear mi cuenta</button>
+        </form>
+        <div class="cc-switch">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></div>
+      </div>
+      <div class="cc-exito" id="reg-exito" hidden>
+        <div class="cc-exito__check">✓</div>
+        <h1 style="text-align:center">Revisa tu correo</h1>
+        <p>Te mandamos un link para confirmar tu cuenta. Apenas lo confirmes, inicia sesión y terminamos de configurar tu negocio.</p>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="registro.js"></script>
+</body>
+</html>

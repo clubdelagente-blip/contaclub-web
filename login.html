@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión — ContaClub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=142">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="cc-wrap">
+    <a href="index.html" class="cc-brand" style="text-decoration:none">Conta<span>Club</span></a>
+    <div class="cc-card">
+      <h1>Inicia sesión</h1>
+      <p class="cc-sub">Entra a Mi Contabilidad de tu negocio.</p>
+      <p class="cc-error" id="login-error" hidden></p>
+      <form id="login-form">
+        <div class="cc-campo"><label>Correo</label><input id="login-email" type="email" required></div>
+        <div class="cc-campo"><label>Contraseña</label><input id="login-pass" type="password" required></div>
+        <button type="submit" class="btn btn--primario" id="login-btn" style="width:100%;justify-content:center;margin-top:4px">Entrar</button>
+      </form>
+      <div class="cc-switch">¿Todavía no tienes cuenta? <a href="registro.html">Regístrate</a></div>
+    </div>
+  </div>
+  <script type="module" src="login.js"></script>
+</body>
+</html>

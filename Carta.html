@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carta — ContaClub</title>
+  <meta name="theme-color" content="#095544">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Mismo CSS/JS que usa El Club de la Gente para su carta, cargado
+       cruzado -- cero lógica duplicada. Ver README.md del repo. -->
+  <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=142">
+  <link rel="stylesheet" href="https://elclubdelagente.com/carta.css?v=26">
+</head>
+<body>
+  <div id="fondo-fijo" aria-hidden="true"></div>
+
+  <div class="carta-feed" id="carta-grid"></div>
+  <div id="carta-estado-vacio" hidden class="carta-vacio">
+    <p>Este negocio todavía no tiene su carta lista.</p>
+  </div>
+
+  <div id="carta-chrome">
+    <header class="carta-top">
+      <div class="wrap">
+        <div class="carta-top__negocio">
+          <div class="carta-top__logo" id="carta-logo"></div>
+          <div style="flex:1;min-width:0">
+            <div class="carta-top__nombre" id="carta-nombre">Cargando…</div>
+            <div class="carta-top__sub">Carta digital · ContaClub</div>
+          </div>
+          <a href="#" target="_blank" rel="noopener" class="carta-top__ig" id="carta-instagram" hidden aria-label="Instagram del negocio">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="wrap"><div class="carta-cat-pills" id="carta-cat-pills"></div></div>
+  </div>
+
+  <div class="carta-foto-overlay" id="carta-foto-overlay" hidden>
+    <button type="button" class="carta-foto-cerrar" id="carta-foto-cerrar" aria-label="Cerrar">✕</button>
+    <div class="carta-foto-escenario">
+      <div class="carta-foto-piso" id="carta-foto-piso"></div>
+      <div class="carta-foto-wrap" id="carta-foto-wrap">
+        <div class="carta-foto-marco"></div>
+        <img class="carta-foto-grande" id="carta-foto-grande" src="" alt="">
+        <div class="carta-foto-glare" id="carta-foto-glare"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Personalizar producto: toppings/salsas/tamaño antes de agregarlo -->
+  <div class="carta-mod-overlay" id="carta-mod-overlay" hidden>
+    <div class="carta-mod-sheet">
+      <button type="button" class="carta-sheet__cerrar" id="carta-mod-cerrar" aria-label="Cerrar">✕</button>
+      <h2 class="carta-sheet__titulo" id="carta-mod-nombre"></h2>
+      <p class="carta-mod-desc" id="carta-mod-desc"></p>
+      <div id="carta-mod-grupos"></div>
+      <div class="carta-mod-footer">
+        <div class="carta-qty en-uso" id="carta-mod-qty-wrap">
+          <button type="button" class="carta-qty__menos" id="carta-mod-qty-menos" aria-label="Quitar uno">−</button>
+          <span class="carta-qty__n" id="carta-mod-qty-n">1</span>
+          <button type="button" id="carta-mod-qty-mas" aria-label="Agregar uno">+</button>
+        </div>
+        <button type="button" class="btn btn--primario" id="carta-mod-agregar">Añadir</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="carta-barra" id="carta-barra" hidden>
+    <div class="wrap carta-barra__inner">
+      <div>
+        <span class="carta-barra__items" id="carta-barra-items">0 productos</span>
+        <span class="carta-barra__total" id="carta-barra-total">$0</span>
+      </div>
+      <button type="button" class="btn btn--primario" id="carta-ver-pedido">Ver pedido</button>
+    </div>
+  </div>
+
+  <!-- Resumen / checkout -->
+  <div class="carta-overlay" id="carta-overlay" hidden>
+    <div class="carta-sheet">
+      <button type="button" class="carta-sheet__cerrar" id="carta-sheet-cerrar" aria-label="Cerrar">✕</button>
+      <h2 class="carta-sheet__titulo">Tu pedido</h2>
+      <div id="carta-sheet-items"></div>
+      <div class="carta-sheet__total"><span>Total</span><span id="carta-sheet-total">$0</span></div>
+
+      <div id="carta-sheet-form">
+        <div class="carta-campo"><label>Tu nombre *</label><input id="carta-cliente-nombre" type="text" placeholder="¿Cómo te llamas?"></div>
+        <div class="carta-campo">
+          <label>WhatsApp (opcional)</label>
+          <input id="carta-cliente-wa" type="tel" placeholder="300 000 0000">
+          <p id="carta-sellos-hint" hidden style="font-size:12px;color:var(--verde);margin-top:6px;line-height:1.5"></p>
+        </div>
+        <div class="carta-campo"><label>Nota <span style="font-weight:400;color:var(--tinta-45)">(opcional)</span></label><input id="carta-cliente-nota" type="text" placeholder="Ej: sin cebolla, tocar el timbre..."></div>
+
+        <div class="carta-campo" id="carta-campo-entrega" hidden>
+          <label>¿Cómo lo quieres? *</label>
+          <div class="carta-metodo-pago">
+            <button type="button" class="carta-metodo-btn" data-entrega="recoger">🏪 Recoger</button>
+            <button type="button" class="carta-metodo-btn" data-entrega="domicilio">🛵 Domicilio</button>
+          </div>
+          <p id="carta-entrega-info" style="font-size:12.5px;color:var(--verde);margin-top:8px"></p>
+        </div>
+        <div class="carta-campo" id="carta-campo-direccion" hidden>
+          <label>Dirección de entrega *</label>
+          <input id="carta-cliente-direccion" type="text" placeholder="Calle, número, barrio...">
+        </div>
+
+        <div class="carta-campo" id="carta-campo-mesa-alcance" hidden>
+          <label>¿Vas a pagar tú? *</label>
+          <div class="carta-metodo-pago" style="flex-wrap:wrap">
+            <button type="button" class="carta-metodo-btn" data-alcance="mio">🙋 Pago lo mío</button>
+            <button type="button" class="carta-metodo-btn" data-alcance="mesa">🍽️ Pago toda la mesa</button>
+            <button type="button" class="carta-metodo-btn" data-alcance="nadie">🙌 Alguien más paga</button>
+          </div>
+          <p id="carta-mesa-alcance-total" style="font-size:12.5px;color:var(--verde);margin-top:8px"></p>
+          <div id="carta-mesa-factura" style="margin-top:6px"></div>
+        </div>
+
+        <div class="carta-campo" id="carta-campo-pago">
+          <label>¿Cómo vas a pagar? *</label>
+          <div class="carta-metodo-pago">
+            <button type="button" class="carta-metodo-btn" data-metodo="efectivo">💵 Efectivo</button>
+            <button type="button" class="carta-metodo-btn" data-metodo="transferencia">🏦 Transferencia</button>
+          </div>
+        </div>
+
+        <div id="carta-pago-efectivo" hidden class="carta-pago-detalle">
+          <div class="carta-pago-monto-fila">
+            <p class="carta-pago-monto" id="carta-pago-efectivo-monto">$0</p>
+            <button type="button" class="carta-pago-monto-copiar" data-copiar-monto="efectivo">Copiar valor</button>
+          </div>
+          <p>Ve a la caja y paga ese valor en efectivo. Cuando ya hayas pagado, dale a "Ya pagué".</p>
+        </div>
+
+        <div id="carta-pago-transferencia" hidden class="carta-pago-detalle">
+          <div class="carta-pago-monto-fila">
+            <p class="carta-pago-monto" id="carta-pago-transferencia-monto">$0</p>
+            <button type="button" class="carta-pago-monto-copiar" data-copiar-monto="transferencia">Copiar valor</button>
+          </div>
+          <img id="carta-pago-qr" src="" alt="QR de pago del negocio" hidden>
+          <button type="button" id="carta-pago-qr-descargar" class="btn" hidden>Descargar QR</button>
+          <div class="carta-campo">
+            <label>Llave de pago (Nequi, Bre-B...)</label>
+            <div style="display:flex;gap:8px">
+              <input id="carta-pago-llave" readonly style="flex:1;min-width:0">
+              <button type="button" class="btn" id="carta-pago-llave-copiar" style="white-space:nowrap">Copiar</button>
+            </div>
+          </div>
+          <div class="carta-campo">
+            <label>Comprobante de pago *</label>
+            <input type="file" id="carta-comprobante" accept="image/*">
+          </div>
+        </div>
+
+        <button type="button" class="btn btn--primario carta-sheet__enviar" id="carta-enviar-pedido">Ya pagué</button>
+      </div>
+
+      <div id="carta-sheet-exito" hidden class="carta-exito">
+        <div class="carta-exito__check">✓</div>
+        <h3>¡Pedido enviado!</h3>
+        <p>El negocio lo confirmará pronto. Gracias por tu compra.</p>
+        <p id="carta-sellos-resultado" hidden style="margin-top:14px;font-size:13.5px;font-weight:600;color:var(--verde);background:var(--verde-soft);border-radius:10px;padding:12px"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- "¿Deseas agregar algo más?": sale cada vez que se agrega un producto
+       nuevo al pedido. Sí vuelve al feed, No abre directo el pago. -->
+  <div class="carta-masalgo-overlay" id="carta-masalgo-overlay" hidden>
+    <div class="carta-masalgo-caja">
+      <div class="check">✓</div>
+      <h3>¡Listo, lo agregamos!</h3>
+      <p>¿Deseas agregar algo más a tu pedido?</p>
+      <div class="carta-masalgo-botones">
+        <button type="button" class="btn btn--primario" id="carta-masalgo-si">Sí, seguir viendo</button>
+        <button type="button" class="btn" id="carta-masalgo-no">No, ya quiero pagar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pide WhatsApp la primera vez que se da like o se comenta -- para
+       sumar puntos a nombre de alguien (participar por premios después). -->
+  <div class="carta-masalgo-overlay" id="carta-puntos-overlay" hidden>
+    <div class="carta-masalgo-caja">
+      <div class="check">🎁</div>
+      <h3>¡Sumas puntos!</h3>
+      <p>Cada like y cada comentario suman puntos para participar por premios de este negocio. Déjanos tu WhatsApp para contarlos a tu nombre.</p>
+      <div class="carta-campo" style="text-align:left"><input id="carta-puntos-whatsapp" type="tel" placeholder="300 000 0000"></div>
+      <div class="carta-masalgo-botones">
+        <button type="button" class="btn btn--primario" id="carta-puntos-guardar">Guardar y sumar puntos</button>
+        <button type="button" class="btn" id="carta-puntos-ahora-no">Ahora no</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="carta-toast" id="carta-toast"></div>
+
+  <!-- Comentarios de un producto: solo se ven los que el negocio ya aprobó -->
+  <div class="carta-overlay" id="carta-comentarios-overlay" hidden>
+    <div class="carta-sheet">
+      <button type="button" class="carta-sheet__cerrar" id="carta-comentarios-cerrar" aria-label="Cerrar">✕</button>
+      <h2 class="carta-sheet__titulo" id="carta-comentarios-titulo">Comentarios</h2>
+      <div id="carta-comentarios-lista"></div>
+      <div class="carta-comentario-form">
+        <div class="carta-campo"><label>Tu nombre</label><input id="carta-comentario-nombre" type="text" placeholder="¿Cómo te llamas?"></div>
+        <div class="carta-campo"><label>Tu comentario</label><textarea id="carta-comentario-texto" placeholder="¿Qué te pareció?"></textarea></div>
+        <button type="button" class="btn btn--primario" id="carta-comentario-enviar" style="width:100%">Enviar comentario</button>
+        <p class="carta-comentario-aviso" id="carta-comentario-aviso">Tu comentario quedará visible cuando el negocio lo apruebe. ¡Gracias!</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="https://elclubdelagente.com/carta.js?v=32"></script>
+</body>
+</html>

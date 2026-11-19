@@ -1,0 +1,41 @@
+/* ============================================================
+   ContaClub (contaclub.online) — estilos propios, mínimos.
+   Hereda variables/tipografía de styles.css (cargado antes que este,
+   cruzado desde elclubdelagente.com) -- acá solo va layout + branding.
+   ============================================================ */
+
+body { background: var(--crema); min-height: 100vh; }
+
+.cc-wrap { max-width: 480px; margin: 0 auto; padding: 48px 20px; }
+
+.cc-brand { display: flex; align-items: center; justify-content: center; gap: 2px; margin-bottom: 28px; font-family: var(--display); font-size: 22px; font-weight: 700; color: var(--tinta); text-align: center; }
+.cc-brand span { color: var(--verde); }
+
+.cc-card { background: #fff; border: 1px solid var(--linea); border-radius: 18px; padding: 28px 24px; box-shadow: 0 2px 16px rgba(0,0,0,.05); }
+.cc-card h1 { font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--tinta); margin: 0 0 6px; }
+.cc-card p.cc-sub { font-size: 13px; color: var(--tinta-60); margin: 0 0 22px; line-height: 1.5; }
+
+.cc-campo { margin-bottom: 14px; }
+.cc-campo label { display: block; font-size: 12px; font-weight: 600; color: var(--tinta-60); margin-bottom: 6px; }
+.cc-campo input, .cc-campo select { width: 100%; padding: 12px 14px; border: 1px solid var(--linea-fuerte); border-radius: 10px; font-family: var(--cuerpo); font-size: 15px; box-sizing: border-box; }
+
+.cc-error { font-size: 12.5px; color: #c0392b; background: #fdecea; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; }
+.cc-error[hidden] { display: none; }
+
+.cc-switch { text-align: center; font-size: 13px; color: var(--tinta-60); margin-top: 18px; }
+.cc-switch a { color: var(--verde); font-weight: 600; text-decoration: none; }
+
+.cc-exito { text-align: center; padding: 10px 0; }
+.cc-exito__check { width: 52px; height: 52px; border-radius: 50%; background: var(--verde-soft); color: var(--verde); font-size: 24px; font-weight: 700; display: grid; place-items: center; margin: 0 auto 16px; }
+.cc-exito p { font-size: 13.5px; color: var(--tinta-60); line-height: 1.6; }
+
+/* ---------- Landing simple ---------- */
+.cc-hero { text-align: center; padding: 64px 20px 40px; }
+.cc-hero h1 { font-family: var(--display); font-size: clamp(28px,7vw,40px); color: var(--tinta); margin: 0 0 14px; line-height: 1.1; }
+.cc-hero p { font-size: 15px; color: var(--tinta-60); max-width: 44ch; margin: 0 auto 28px; line-height: 1.55; }
+
+/* ---------- Dashboard shell ---------- */
+.cc-dash-top { background: #fff; border-bottom: 1px solid var(--linea); padding: 16px 0; }
+.cc-dash-top__inner { max-width: 720px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.cc-dash-top__nombre { font-family: var(--display); font-size: 16px; font-weight: 700; color: var(--tinta); }
+.cc-dash-body { max-width: 720px; margin: 0 auto; padding: 24px 20px 60px; }
