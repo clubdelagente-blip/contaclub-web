@@ -328,5 +328,27 @@
        cargada cruzado -- cero código duplicado. Mismo ?v= que use
        Perfil.html en cada momento. -->
   <script type="module" src="https://elclubdelagente.com/dashboard.js?v=249"></script>
+
+  <!-- Red de seguridad propia de esta página: dashboard.js bloquea el
+       scroll del body mientras hay un modal abierto (bloquearScroll/
+       desbloquearScroll) y lo suelta al cerrarlo -- pensado para
+       Perfil.html, donde ya hay más historial de navegación detrás. Acá,
+       si por lo que sea el bloqueo no se suelta bien, la página entera
+       queda sin poder deslizarse. Esto lo libera solo, sin tocar nada si
+       no hace falta. -->
+  <script>
+    setTimeout(() => {
+      const modal = document.getElementById("modal-tienda");
+      const modalAbierto = modal && getComputedStyle(modal).display !== "none";
+      if (!modalAbierto && document.body.style.position === "fixed") {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+        delete document.body.dataset.scrollY;
+      }
+    }, 2500);
+  </script>
 </body>
 </html>
