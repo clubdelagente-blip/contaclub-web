@@ -11,13 +11,19 @@ import { supabase } from 'https://elclubdelagente.com/supabase.js';
 
 const $ = (s) => document.querySelector(s);
 
+// activo:true a propósito -- "aliados_publico" (la vista que lee la propia
+// carta pública del negocio en Carta.html) solo trae filas con activo=true,
+// así que ponerlo en false rompería su propia carta. El blindaje contra el
+// Directorio/landing del Club NO depende de "activo": ya lo hace
+// contaclub_standalone (ver el filtro en directorio.js/app-cms.js del
+// repo principal), así que "activo" puede quedarse en true sin riesgo.
 async function crearFilasNegocio(userId, datos) {
   const { error: perfilError } = await supabase.from("perfiles").insert({
     id: userId, rol: "aliado", nombre: datos.nombre, whatsapp: datos.whatsapp || null,
   });
   const { error: aliadoError } = await supabase.from("aliados").insert({
     user_id: userId, nombre: datos.nombre, categoria: datos.categoria || null, whatsapp: datos.whatsapp || null,
-    contaclub_standalone: true, activo: false,
+    contaclub_standalone: true, activo: true,
   });
   return perfilError || aliadoError || null;
 }

@@ -19,9 +19,12 @@ async function crearFilasNegocioSiHacenFalta(userId) {
   const { data: yaExiste } = await supabase.from("perfiles").select("id").eq("id", userId).maybeSingle();
   if (!yaExiste) {
     await supabase.from("perfiles").insert({ id: userId, rol: "aliado", nombre: datos.nombre, whatsapp: datos.whatsapp || null });
+    // activo:true -- ver la nota en registro.js, "activo" es lo que lee
+    // la propia carta pública del negocio, no el blindaje del Directorio
+    // (eso lo hace contaclub_standalone aparte).
     await supabase.from("aliados").insert({
       user_id: userId, nombre: datos.nombre, categoria: datos.categoria || null, whatsapp: datos.whatsapp || null,
-      contaclub_standalone: true, activo: false,
+      contaclub_standalone: true, activo: true,
     });
   }
   try { localStorage.removeItem("contaclub_pending_registro"); } catch {}
