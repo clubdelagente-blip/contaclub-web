@@ -11,7 +11,7 @@
   <!-- Mismo CSS/JS que usa El Club de la Gente para su carta, cargado
        cruzado -- cero lógica duplicada. Ver README.md del repo. -->
   <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=143">
-  <link rel="stylesheet" href="https://elclubdelagente.com/carta.css?v=46">
+  <link rel="stylesheet" href="https://elclubdelagente.com/carta.css?v=47">
 </head>
 <body>
   <div id="fondo-fijo" aria-hidden="true"></div>
@@ -291,12 +291,14 @@
       </div>
 
       <div class="carta-perfil-bloque" id="carta-perfil-sellos-bloque" hidden>
-        <div class="carta-perfil-bloque__cabeza">
-          <span>🎟️ Tarjeta de sellos</span>
-          <span id="carta-perfil-sellos-n">0/0</span>
+        <div class="carta-sellos-card" id="carta-sellos-card">
+          <div class="carta-sellos-card__negocio" id="carta-sellos-card__negocio"></div>
+          <div class="carta-sellos-card__grid" id="carta-perfil-sellos-grid"></div>
+          <div class="carta-sellos-card__pie">
+            <div><span class="carta-sellos-card__n" id="carta-perfil-sellos-n">0</span><span class="carta-sellos-card__label">sellos</span></div>
+            <p class="carta-perfil-premio" id="carta-perfil-premio"></p>
+          </div>
         </div>
-        <div class="carta-perfil-barra"><div class="carta-perfil-barra__fill" id="carta-perfil-sellos-barra"></div></div>
-        <p class="carta-perfil-premio" id="carta-perfil-premio"></p>
       </div>
 
       <a href="#" target="_blank" rel="noopener" class="carta-sigue-pill carta-perfil-sigue" id="carta-instagram" hidden>
@@ -346,6 +348,6 @@
     </div>
   </div>
 
-  <script type="module" src="https://elclubdelagente.com/carta.js?v=48"></script>
+  <script type="module" src="https://elclubdelagente.com/carta.js?v=49"></script>
 </body>
 </html>
