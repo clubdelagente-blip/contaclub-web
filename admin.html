@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=143">
-  <link rel="stylesheet" href="app.css?v=2">
+  <link rel="stylesheet" href="app.css?v=3">
 </head>
 <body>
   <div class="cc-app">
@@ -21,10 +21,22 @@
       </div>
 
       <div class="cc-sidebar__label">Panel interno</div>
-      <nav class="cc-sidebar__nav">
-        <button class="cc-nav-item is-on" type="button">
+      <nav class="cc-sidebar__nav" id="admin-nav">
+        <button class="cc-nav-item is-on" type="button" data-seccion="negocios">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           Negocios y cobros
+        </button>
+        <button class="cc-nav-item" type="button" data-seccion="planes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Planes
+        </button>
+        <button class="cc-nav-item" type="button" data-seccion="publicidad">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a2 2 0 1 1-3.2 2.4L6 15"/></svg>
+          Publicidad
+        </button>
+        <button class="cc-nav-item" type="button" data-seccion="pagos">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          Pagos
         </button>
       </nav>
 
@@ -40,40 +52,113 @@
     <main class="cc-main">
       <div class="cc-topbar">
         <div>
-          <h1 class="cc-topbar__title">ContaClub — Admin</h1>
-          <p class="cc-topbar__sub">Planes de los negocios y cobros por volumen de facturación. Solo para el equipo de El Club de la Gente.</p>
+          <h1 class="cc-topbar__title" id="admin-titulo">ContaClub — Admin</h1>
+          <p class="cc-topbar__sub" id="admin-subtitulo">Planes de los negocios y cobros por volumen de facturación. Solo para el equipo de El Club de la Gente.</p>
         </div>
       </div>
 
-      <div class="cc-card" style="margin-bottom:22px">
-        <h1>Negocios</h1>
-        <p class="cc-sub">Asigna el paquete de cada negocio y marca si ya pagó la implementación ($400.000, pago único).</p>
-        <div class="cc-tabla-wrap">
-          <table class="cc-tabla">
-            <thead><tr><th>Negocio</th><th>WhatsApp</th><th>Paquete</th><th style="text-align:center">Implementación pagada</th></tr></thead>
-            <tbody id="negocios-lista"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
-          </table>
-        </div>
-      </div>
+      <!-- ---------- Negocios y cobros ---------- -->
+      <section id="admin-seccion-negocios" class="admin-seccion">
+        <div class="cc-metric-row" id="metricas-cobros"></div>
 
-      <div class="cc-card">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px">
-          <div>
-            <h1 style="margin-bottom:6px">Cobros por volumen</h1>
-            <p class="cc-sub" style="margin:0">Paquete 2: cuando la facturación mensual de un negocio supera $10.000.000, se cobra 0.3% sobre esa facturación. Este botón calcula el cobro del mes pasado para todos los negocios en ese paquete.</p>
+        <div class="cc-card" style="margin-bottom:22px">
+          <h1>Negocios</h1>
+          <p class="cc-sub">Asigna el plan de cada negocio y marca si ya pagó la implementación (pago único).</p>
+          <div class="cc-tabla-wrap">
+            <table class="cc-tabla">
+              <thead><tr><th>Negocio</th><th>WhatsApp</th><th>Plan</th><th style="text-align:center">Implementación pagada</th></tr></thead>
+              <tbody id="negocios-lista"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
+            </table>
           </div>
-          <button type="button" class="btn btn--primario" id="calcular-cobros-btn" style="white-space:nowrap">Calcular cobros del mes pasado</button>
         </div>
-        <div class="cc-tabla-wrap">
-          <table class="cc-tabla">
-            <thead><tr><th>Negocio</th><th>Mes</th><th>Facturación</th><th>Cobro (0.3%)</th><th>Estado</th><th></th></tr></thead>
-            <tbody id="cobros-lista"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
-          </table>
+
+        <div class="cc-card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px">
+            <div>
+              <h1 style="margin-bottom:6px">Cobros del mes</h1>
+              <p class="cc-sub" style="margin:0">Genera la mensualidad de los negocios en plan fijo y el cobro por volumen de los que superaron el umbral -- todo según lo que configures en "Planes".</p>
+            </div>
+            <button type="button" class="btn btn--primario" id="calcular-cobros-btn" style="white-space:nowrap">Calcular cobros del mes pasado</button>
+          </div>
+          <div class="cc-tabla-wrap">
+            <table class="cc-tabla">
+              <thead><tr><th>Negocio</th><th>Mes</th><th>Facturación</th><th>Cobro</th><th>Estado</th><th></th></tr></thead>
+              <tbody id="cobros-lista"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      </section>
+
+      <!-- ---------- Planes ---------- -->
+      <section id="admin-seccion-planes" class="admin-seccion" hidden>
+        <div class="cc-card" style="margin-bottom:22px">
+          <h1 id="plan-form-titulo">Crear plan</h1>
+          <p class="cc-sub">Deja "Mensualidad" vacía si el cobro es por volumen de facturación; deja "Umbral" y "% sobre facturación" vacíos si el plan cobra una mensualidad fija.</p>
+          <input type="hidden" id="plan-id">
+          <div class="cc-campo"><label>Nombre</label><input id="plan-nombre" placeholder="Ej: Paquete 1 · Básico"></div>
+          <div class="cc-campo"><label>Implementación (pago único)</label><input id="plan-implementacion" type="number" min="0" placeholder="400000"></div>
+          <div class="cc-campo"><label>Mensualidad fija (vacío si es por volumen)</label><input id="plan-mensualidad" type="number" min="0" placeholder="49900"></div>
+          <div class="cc-campo"><label>Umbral de facturación mensual (vacío si no aplica)</label><input id="plan-umbral" type="number" min="0" placeholder="10000000"></div>
+          <div class="cc-campo"><label>% sobre la facturación que supera el umbral</label><input id="plan-porcentaje" type="number" min="0" step="0.01" placeholder="0.3"></div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tinta-60);margin-bottom:16px"><input type="checkbox" id="plan-activo" checked style="width:auto"> Plan activo (disponible para asignar)</label>
+          <div style="display:flex;gap:10px">
+            <button type="button" class="btn btn--primario" id="plan-guardar">Guardar plan</button>
+            <button type="button" class="btn" id="plan-cancelar" hidden>Cancelar edición</button>
+          </div>
+        </div>
+        <div class="cc-card">
+          <h1>Planes existentes</h1>
+          <div class="cc-tabla-wrap">
+            <table class="cc-tabla">
+              <thead><tr><th>Nombre</th><th>Implementación</th><th>Mensualidad</th><th>Umbral</th><th>%</th><th>Activo</th><th></th></tr></thead>
+              <tbody id="planes-lista"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Publicidad intermedia (en el feed de las cartas de
+           todos los negocios de ContaClub) ---------- -->
+      <section id="admin-seccion-publicidad" class="admin-seccion" hidden>
+        <div class="cc-card" style="margin-bottom:22px">
+          <h1 id="anuncio-form-titulo">Crear anuncio</h1>
+          <p class="cc-sub">Aparece intercalado cada varios productos en el feed de la carta pública de TODOS los negocios de ContaClub (marcado como "Publicidad").</p>
+          <input type="hidden" id="anuncio-id">
+          <div class="cc-campo"><label>Título</label><input id="anuncio-titulo" placeholder="Ej: Anúnciate aquí"></div>
+          <div class="cc-campo"><label>Descripción (opcional)</label><input id="anuncio-descripcion" placeholder="Una línea corta"></div>
+          <div class="cc-campo"><label>Imagen (URL)</label><input id="anuncio-imagen" type="url" placeholder="https://..."></div>
+          <div class="cc-campo"><label>Link al tocar (opcional)</label><input id="anuncio-link" type="url" placeholder="https://..."></div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tinta-60);margin-bottom:16px"><input type="checkbox" id="anuncio-activo" checked style="width:auto"> Activo (se muestra ya mismo)</label>
+          <div style="display:flex;gap:10px">
+            <button type="button" class="btn btn--primario" id="anuncio-guardar">Guardar anuncio</button>
+            <button type="button" class="btn" id="anuncio-cancelar" hidden>Cancelar edición</button>
+          </div>
+        </div>
+        <div class="cc-card">
+          <h1>Anuncios</h1>
+          <div class="cc-tabla-wrap">
+            <table class="cc-tabla">
+              <thead><tr><th>Imagen</th><th>Título</th><th>Activo</th><th></th></tr></thead>
+              <tbody id="anuncios-lista"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- Llave de pago (implementación + mensualidad) ---------- -->
+      <section id="admin-seccion-pagos" class="admin-seccion" hidden>
+        <div class="cc-card">
+          <h1>Llave de pago de ContaClub</h1>
+          <p class="cc-sub">La que ven los negocios para pagar la implementación y la mensualidad por transferencia (Nequi, Bre-B...). Aplica a todos -- un solo destino de pago.</p>
+          <div class="cc-campo"><label>Llave de pago</label><input id="pago-llave" placeholder="Ej: 300 123 4567"></div>
+          <div class="cc-campo"><label>QR de pago (URL de la imagen)</label><input id="pago-qr-url" type="url" placeholder="https://..."></div>
+          <div id="pago-qr-preview" style="margin-bottom:16px"></div>
+          <button type="button" class="btn btn--primario" id="pago-guardar">Guardar</button>
+        </div>
+      </section>
     </main>
   </div>
 
-  <script type="module" src="admin.js?v=1"></script>
+  <script type="module" src="admin.js?v=2"></script>
 </body>
 </html>

@@ -1,8 +1,9 @@
 /* ============================================================
    ContaClub — panel admin interno (solo El Club de la Gente, no el
    negocio). Proyecto propio y separado del Admin.html del Club -- esto
-   SOLO gestiona negocios de ContaClub (contaclub_standalone=true): su
-   paquete contratado y los cobros mensuales por volumen de facturación.
+   SOLO gestiona negocios de ContaClub (contaclub_standalone=true): sus
+   planes, los cobros mensuales, la publicidad que se intercala en todas
+   sus cartas públicas, y la llave de pago de ContaClub.
    Reusa el mismo Supabase (cliente compartido, cargado cruzado) y el
    mismo rol "admin" de perfiles -- el mismo equipo administra los dos
    proyectos, solo que desde paneles distintos.
@@ -13,6 +14,7 @@ const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 const nf = new Intl.NumberFormat("es-CO");
 const COP = (n) => "$" + nf.format(Math.round(n || 0));
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 
 async function iniciar() {
   const { data: { session } } = await supabase.auth.getSession();
@@ -21,18 +23,108 @@ async function iniciar() {
   if (perfil?.rol !== "admin") { location.href = "dashboard.html"; return; }
 
   $("#admin-salir")?.addEventListener("click", async () => { await supabase.auth.signOut(); location.href = "login.html"; });
-  $("#calcular-cobros-btn")?.addEventListener("click", calcularCobros);
+  wireNav();
 
-  await Promise.all([cargarNegocios(), cargarCobros()]);
+  $("#calcular-cobros-btn")?.addEventListener("click", calcularCobros);
+  $("#plan-guardar")?.addEventListener("click", guardarPlan);
+  $("#plan-cancelar")?.addEventListener("click", resetFormPlan);
+  $("#anuncio-guardar")?.addEventListener("click", guardarAnuncio);
+  $("#anuncio-cancelar")?.addEventListener("click", resetFormAnuncio);
+  $("#pago-guardar")?.addEventListener("click", guardarConfigPago);
+  $("#pago-qr-url")?.addEventListener("input", pintarPreviewQr);
+
+  await Promise.all([cargarPlanes(), cargarNegocios(), cargarCobros(), cargarAnuncios(), cargarConfigPago()]);
 }
 
+/* ---------- Navegación entre secciones ---------- */
+function wireNav() {
+  $$("#admin-nav [data-seccion]").forEach(btn => btn.addEventListener("click", () => {
+    $$("#admin-nav [data-seccion]").forEach(b => b.classList.toggle("is-on", b === btn));
+    $$(".admin-seccion").forEach(sec => sec.hidden = sec.id !== `admin-seccion-${btn.dataset.seccion}`);
+  }));
+}
+
+/* ---------- Planes ---------- */
+let _planes = [];
+async function cargarPlanes() {
+  const { data } = await supabase.from("contaclub_planes").select("*").order("orden");
+  _planes = data || [];
+  pintarPlanes();
+  pintarSelectPlanesEnNegocios();
+}
+function pintarPlanes() {
+  const cont = $("#planes-lista");
+  if (!cont) return;
+  if (!_planes.length) {
+    cont.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay planes creados.</td></tr>`;
+    return;
+  }
+  cont.innerHTML = _planes.map(p => `
+    <tr>
+      <td>${esc(p.nombre)}</td>
+      <td>${COP(p.implementacion)}</td>
+      <td>${p.mensualidad != null ? COP(p.mensualidad) + "/mes" : "—"}</td>
+      <td>${p.umbral_facturacion != null ? COP(p.umbral_facturacion) : "—"}</td>
+      <td>${p.porcentaje_volumen != null ? (Number(p.porcentaje_volumen) * 100).toFixed(2).replace(/\.?0+$/, "") + "%" : "—"}</td>
+      <td>${p.activo ? "Sí" : "No"}</td>
+      <td><button type="button" class="btn" data-editar-plan="${p.id}" style="padding:6px 12px;font-size:12px">Editar</button></td>
+    </tr>`).join("");
+  $$("[data-editar-plan]", cont).forEach(b => b.addEventListener("click", () => cargarPlanEnForm(b.dataset.editarPlan)));
+}
+function cargarPlanEnForm(id) {
+  const p = _planes.find(x => x.id === id);
+  if (!p) return;
+  $("#plan-id").value = p.id;
+  $("#plan-nombre").value = p.nombre || "";
+  $("#plan-implementacion").value = p.implementacion ?? "";
+  $("#plan-mensualidad").value = p.mensualidad ?? "";
+  $("#plan-umbral").value = p.umbral_facturacion ?? "";
+  $("#plan-porcentaje").value = p.porcentaje_volumen != null ? Number(p.porcentaje_volumen) * 100 : "";
+  $("#plan-activo").checked = !!p.activo;
+  $("#plan-form-titulo").textContent = "Editar plan";
+  $("#plan-cancelar").hidden = false;
+  $("#admin-seccion-planes").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function resetFormPlan() {
+  $("#plan-id").value = "";
+  ["plan-nombre", "plan-implementacion", "plan-mensualidad", "plan-umbral", "plan-porcentaje"].forEach(id => { const el = $(`#${id}`); if (el) el.value = ""; });
+  $("#plan-activo").checked = true;
+  $("#plan-form-titulo").textContent = "Crear plan";
+  $("#plan-cancelar").hidden = true;
+}
+async function guardarPlan() {
+  const nombre = $("#plan-nombre")?.value.trim();
+  if (!nombre) { alert("Escribe el nombre del plan"); return; }
+  const payload = {
+    nombre,
+    implementacion: Number($("#plan-implementacion")?.value) || 0,
+    mensualidad: $("#plan-mensualidad")?.value ? Number($("#plan-mensualidad").value) : null,
+    umbral_facturacion: $("#plan-umbral")?.value ? Number($("#plan-umbral").value) : null,
+    porcentaje_volumen: $("#plan-porcentaje")?.value ? Number($("#plan-porcentaje").value) / 100 : null,
+    activo: $("#plan-activo")?.checked ?? true,
+  };
+  const id = $("#plan-id")?.value;
+  const btn = $("#plan-guardar");
+  btn.disabled = true; btn.textContent = "Guardando…";
+  const { error } = id
+    ? await supabase.from("contaclub_planes").update(payload).eq("id", id)
+    : await supabase.from("contaclub_planes").insert(payload);
+  btn.disabled = false; btn.textContent = "Guardar plan";
+  if (error) { alert("No se pudo guardar: " + error.message); return; }
+  resetFormPlan();
+  await cargarPlanes();
+}
+
+/* ---------- Negocios (plan asignado + implementación pagada) ---------- */
 async function cargarNegocios() {
   const { data } = await supabase.from("aliados")
-    .select("id, nombre, whatsapp, contaclub_plan, contaclub_implementacion_pagada")
+    .select("id, nombre, whatsapp, contaclub_plan_id, contaclub_implementacion_pagada")
     .eq("contaclub_standalone", true).order("nombre");
   pintarNegocios(data || []);
 }
+let _negociosActuales = [];
 function pintarNegocios(negocios) {
+  _negociosActuales = negocios;
   const cont = $("#negocios-lista");
   if (!cont) return;
   if (!negocios.length) {
@@ -45,9 +137,8 @@ function pintarNegocios(negocios) {
       <td>${esc(n.whatsapp || "—")}</td>
       <td>
         <select class="cc-campo-select" data-plan="${n.id}">
-          <option value="" ${!n.contaclub_plan ? "selected" : ""}>Sin plan</option>
-          <option value="basico" ${n.contaclub_plan === "basico" ? "selected" : ""}>Paquete 1 · Básico</option>
-          <option value="volumen" ${n.contaclub_plan === "volumen" ? "selected" : ""}>Paquete 2 · Por volumen</option>
+          <option value="">Sin plan</option>
+          ${_planes.map(p => `<option value="${p.id}" ${n.contaclub_plan_id === p.id ? "selected" : ""}>${esc(p.nombre)}</option>`).join("")}
         </select>
       </td>
       <td style="text-align:center"><input type="checkbox" data-impl="${n.id}" ${n.contaclub_implementacion_pagada ? "checked" : ""}></td>
@@ -55,12 +146,16 @@ function pintarNegocios(negocios) {
   $$("[data-plan]", cont).forEach(sel => sel.addEventListener("change", () => guardarNegocio(sel.dataset.plan)));
   $$("[data-impl]", cont).forEach(chk => chk.addEventListener("change", () => guardarNegocio(chk.dataset.impl)));
 }
+// Si los planes llegan/cambian después de pintar negocios, se repinta la
+// tabla para que el <select> de cada fila ya tenga las opciones correctas.
+function pintarSelectPlanesEnNegocios() { if (_negociosActuales.length) pintarNegocios(_negociosActuales); }
 async function guardarNegocio(id) {
-  const plan = $(`[data-plan="${id}"]`)?.value || null;
+  const planId = $(`[data-plan="${id}"]`)?.value || null;
   const impl = $(`[data-impl="${id}"]`)?.checked || false;
-  await supabase.from("aliados").update({ contaclub_plan: plan, contaclub_implementacion_pagada: impl }).eq("id", id);
+  await supabase.from("aliados").update({ contaclub_plan_id: planId, contaclub_implementacion_pagada: impl }).eq("id", id);
 }
 
+/* ---------- Cobros mensuales ---------- */
 async function calcularCobros() {
   const btn = $("#calcular-cobros-btn");
   if (!btn) return;
@@ -71,13 +166,23 @@ async function calcularCobros() {
   const { data, error } = await supabase.rpc("calcular_cobros_contaclub", { p_mes: pMes });
   btn.disabled = false; btn.textContent = "Calcular cobros del mes pasado";
   if (error) { alert("No se pudo calcular: " + error.message); return; }
-  alert(`Listo -- ${data?.length || 0} negocio(s) superaron los $10.000.000 en ${pMes.slice(0, 7)} y quedaron con cobro pendiente.`);
+  alert(`Listo -- ${data?.length || 0} negocio(s) quedaron con cobro pendiente para ${pMes.slice(0, 7)}.`);
   await cargarCobros();
 }
-
 async function cargarCobros() {
   const { data } = await supabase.from("contaclub_cobros_mensuales").select("*, aliados(nombre)").order("mes", { ascending: false });
   pintarCobros(data || []);
+  pintarMetricasCobros(data || []);
+}
+function pintarMetricasCobros(cobros) {
+  const cont = $("#metricas-cobros");
+  if (!cont) return;
+  const pendiente = cobros.filter(c => c.estado === "pendiente").reduce((s, c) => s + Number(c.monto_cobro || 0), 0);
+  const pagado = cobros.filter(c => c.estado === "pagado").reduce((s, c) => s + Number(c.monto_cobro || 0), 0);
+  cont.innerHTML = `
+    <div class="cc-metric"><span class="cc-metric__n">${COP(pendiente)}</span><span class="cc-metric__lbl">Pendiente de cobrar</span></div>
+    <div class="cc-metric"><span class="cc-metric__n">${COP(pagado)}</span><span class="cc-metric__lbl">Ya pagado (histórico)</span></div>
+    <div class="cc-metric"><span class="cc-metric__n">${nf.format(_negociosActuales.filter(n => n.contaclub_plan_id).length)}</span><span class="cc-metric__lbl">Negocios con plan asignado</span></div>`;
 }
 function pintarCobros(cobros) {
   const cont = $("#cobros-lista");
@@ -102,6 +207,95 @@ async function marcarPagado(id) {
   await cargarCobros();
 }
 
-function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+/* ---------- Publicidad (anuncios intercalados en todas las cartas de
+   ContaClub) ---------- */
+let _anuncios = [];
+async function cargarAnuncios() {
+  const { data } = await supabase.from("contaclub_anuncios").select("*").order("orden");
+  _anuncios = data || [];
+  pintarAnuncios();
+}
+function pintarAnuncios() {
+  const cont = $("#anuncios-lista");
+  if (!cont) return;
+  if (!_anuncios.length) {
+    cont.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay anuncios creados.</td></tr>`;
+    return;
+  }
+  cont.innerHTML = _anuncios.map(a => `
+    <tr>
+      <td>${a.imagen_url ? `<img src="${esc(a.imagen_url)}" alt="" style="width:44px;height:44px;border-radius:8px;object-fit:cover;display:block">` : "—"}</td>
+      <td>${esc(a.titulo)}</td>
+      <td>${a.activo ? "Sí" : "No"}</td>
+      <td><button type="button" class="btn" data-editar-anuncio="${a.id}" style="padding:6px 12px;font-size:12px">Editar</button></td>
+    </tr>`).join("");
+  $$("[data-editar-anuncio]", cont).forEach(b => b.addEventListener("click", () => cargarAnuncioEnForm(b.dataset.editarAnuncio)));
+}
+function cargarAnuncioEnForm(id) {
+  const a = _anuncios.find(x => x.id === id);
+  if (!a) return;
+  $("#anuncio-id").value = a.id;
+  $("#anuncio-titulo").value = a.titulo || "";
+  $("#anuncio-descripcion").value = a.descripcion || "";
+  $("#anuncio-imagen").value = a.imagen_url || "";
+  $("#anuncio-link").value = a.link || "";
+  $("#anuncio-activo").checked = !!a.activo;
+  $("#anuncio-form-titulo").textContent = "Editar anuncio";
+  $("#anuncio-cancelar").hidden = false;
+  $("#admin-seccion-publicidad").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function resetFormAnuncio() {
+  $("#anuncio-id").value = "";
+  ["anuncio-titulo", "anuncio-descripcion", "anuncio-imagen", "anuncio-link"].forEach(id => { const el = $(`#${id}`); if (el) el.value = ""; });
+  $("#anuncio-activo").checked = true;
+  $("#anuncio-form-titulo").textContent = "Crear anuncio";
+  $("#anuncio-cancelar").hidden = true;
+}
+async function guardarAnuncio() {
+  const titulo = $("#anuncio-titulo")?.value.trim();
+  const imagen = $("#anuncio-imagen")?.value.trim();
+  if (!titulo || !imagen) { alert("El título y la imagen son obligatorios"); return; }
+  const payload = {
+    titulo, imagen_url: imagen,
+    descripcion: $("#anuncio-descripcion")?.value.trim() || null,
+    link: $("#anuncio-link")?.value.trim() || null,
+    activo: $("#anuncio-activo")?.checked ?? true,
+  };
+  const id = $("#anuncio-id")?.value;
+  const btn = $("#anuncio-guardar");
+  btn.disabled = true; btn.textContent = "Guardando…";
+  const { error } = id
+    ? await supabase.from("contaclub_anuncios").update(payload).eq("id", id)
+    : await supabase.from("contaclub_anuncios").insert({ ...payload, orden: _anuncios.length });
+  btn.disabled = false; btn.textContent = "Guardar anuncio";
+  if (error) { alert("No se pudo guardar: " + error.message); return; }
+  resetFormAnuncio();
+  await cargarAnuncios();
+}
+
+/* ---------- Llave de pago (config global, una sola fila) ---------- */
+async function cargarConfigPago() {
+  const { data } = await supabase.from("contaclub_config").select("*").eq("id", true).maybeSingle();
+  if (!data) return;
+  const llaveEl = $("#pago-llave"); if (llaveEl) llaveEl.value = data.llave_pago || "";
+  const qrEl = $("#pago-qr-url"); if (qrEl) qrEl.value = data.llave_qr_url || "";
+  pintarPreviewQr();
+}
+function pintarPreviewQr() {
+  const cont = $("#pago-qr-preview");
+  const url = $("#pago-qr-url")?.value.trim();
+  if (!cont) return;
+  cont.innerHTML = url ? `<img src="${esc(url)}" alt="" style="width:120px;height:120px;border-radius:10px;border:1px solid var(--linea);object-fit:cover">` : "";
+}
+async function guardarConfigPago() {
+  const btn = $("#pago-guardar");
+  btn.disabled = true; btn.textContent = "Guardando…";
+  const { error } = await supabase.from("contaclub_config").update({
+    llave_pago: $("#pago-llave")?.value.trim() || null,
+    llave_qr_url: $("#pago-qr-url")?.value.trim() || null,
+  }).eq("id", true);
+  btn.disabled = false; btn.textContent = "Guardar";
+  if (error) alert("No se pudo guardar: " + error.message);
+}
 
 document.addEventListener("DOMContentLoaded", iniciar);
