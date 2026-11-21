@@ -49,5 +49,8 @@ $("#login-form")?.addEventListener("submit", async (e) => {
     return;
   }
   await crearFilasNegocioSiHacenFalta(data.user.id);
-  location.href = "dashboard.html";
+  // Un admin del Club (mismo auth.users, panel distinto) entra directo al
+  // panel de ContaClub en vez del dashboard de negocio -- ese ni le aplica.
+  const { data: perfil } = await supabase.from("perfiles").select("rol").eq("id", data.user.id).maybeSingle();
+  location.href = perfil?.rol === "admin" ? "admin.html" : "dashboard.html";
 });

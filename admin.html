@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — ContaClub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=143">
+  <link rel="stylesheet" href="app.css?v=2">
+</head>
+<body>
+  <div class="cc-app">
+    <aside class="cc-sidebar">
+      <div class="cc-sidebar__brand">
+        <span class="cc-sidebar__logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+        </span>
+        <span class="cc-sidebar__nombre">ContaClub Admin</span>
+      </div>
+
+      <div class="cc-sidebar__label">Panel interno</div>
+      <nav class="cc-sidebar__nav">
+        <button class="cc-nav-item is-on" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Negocios y cobros
+        </button>
+      </nav>
+
+      <div class="cc-sidebar__spacer"></div>
+      <nav class="cc-sidebar__nav cc-sidebar__nav--foot">
+        <button type="button" class="cc-nav-item" id="admin-salir">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          Salir
+        </button>
+      </nav>
+    </aside>
+
+    <main class="cc-main">
+      <div class="cc-topbar">
+        <div>
+          <h1 class="cc-topbar__title">ContaClub — Admin</h1>
+          <p class="cc-topbar__sub">Planes de los negocios y cobros por volumen de facturación. Solo para el equipo de El Club de la Gente.</p>
+        </div>
+      </div>
+
+      <div class="cc-card" style="margin-bottom:22px">
+        <h1>Negocios</h1>
+        <p class="cc-sub">Asigna el paquete de cada negocio y marca si ya pagó la implementación ($400.000, pago único).</p>
+        <div class="cc-tabla-wrap">
+          <table class="cc-tabla">
+            <thead><tr><th>Negocio</th><th>WhatsApp</th><th>Paquete</th><th style="text-align:center">Implementación pagada</th></tr></thead>
+            <tbody id="negocios-lista"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="cc-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px">
+          <div>
+            <h1 style="margin-bottom:6px">Cobros por volumen</h1>
+            <p class="cc-sub" style="margin:0">Paquete 2: cuando la facturación mensual de un negocio supera $10.000.000, se cobra 0.3% sobre esa facturación. Este botón calcula el cobro del mes pasado para todos los negocios en ese paquete.</p>
+          </div>
+          <button type="button" class="btn btn--primario" id="calcular-cobros-btn" style="white-space:nowrap">Calcular cobros del mes pasado</button>
+        </div>
+        <div class="cc-tabla-wrap">
+          <table class="cc-tabla">
+            <thead><tr><th>Negocio</th><th>Mes</th><th>Facturación</th><th>Cobro (0.3%)</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="cobros-lista"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="admin.js?v=1"></script>
+</body>
+</html>

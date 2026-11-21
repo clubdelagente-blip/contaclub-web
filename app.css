@@ -131,3 +131,14 @@ body { background: var(--crema); min-height: 100vh; }
   margin-bottom: 12px; font-family: var(--cuerpo);
 }
 .cc-seccion__titulo { font-family: var(--display); font-size: 21px; color: var(--tinta); margin: 0 0 16px; }
+
+/* Panel admin de ContaClub (admin.html, solo equipo del Club) -- tabla
+   simple para negocios y cobros. */
+.cc-tabla-wrap { overflow-x: auto; }
+.cc-tabla { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.cc-tabla th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--tinta-45); padding: 0 10px 10px; border-bottom: 1px solid var(--linea); white-space: nowrap; }
+.cc-tabla td { padding: 12px 10px; border-bottom: 1px solid var(--linea); color: var(--tinta); white-space: nowrap; }
+.cc-tabla tbody tr:last-child td { border-bottom: none; }
+.cc-campo-select { padding: 7px 10px; border: 1px solid var(--linea-fuerte); border-radius: 8px; font-family: var(--cuerpo); font-size: 13px; background: #fff; color: var(--tinta); }
+.cc-cobro-estado { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 100px; background: #fdecea; color: #c0392b; text-transform: capitalize; }
+.cc-cobro-estado.is-pagado { background: var(--verde-soft); color: var(--verde); }
