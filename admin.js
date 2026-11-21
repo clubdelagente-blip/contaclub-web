@@ -118,21 +118,28 @@ async function guardarPlan() {
 
 /* ---------- Negocios (plan asignado + implementación pagada) ---------- */
 async function cargarNegocios() {
-  const { data } = await supabase.from("aliados")
-    .select("id, nombre, whatsapp, contaclub_plan_id, contaclub_implementacion_pagada")
-    .eq("contaclub_standalone", true).order("nombre");
+  const [{ data }, { data: visitas }] = await Promise.all([
+    supabase.from("aliados")
+      .select("id, nombre, whatsapp, contaclub_plan_id, contaclub_implementacion_pagada")
+      .eq("contaclub_standalone", true).order("nombre"),
+    supabase.rpc("contaclub_visitas_por_negocio"),
+  ]);
+  _visitasPorNegocio = new Map((visitas || []).map(v => [v.negocio_id, v]));
   pintarNegocios(data || []);
 }
 let _negociosActuales = [];
+let _visitasPorNegocio = new Map();
 function pintarNegocios(negocios) {
   _negociosActuales = negocios;
   const cont = $("#negocios-lista");
   if (!cont) return;
   if (!negocios.length) {
-    cont.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay negocios de ContaClub registrados.</td></tr>`;
+    cont.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay negocios de ContaClub registrados.</td></tr>`;
     return;
   }
-  cont.innerHTML = negocios.map(n => `
+  cont.innerHTML = negocios.map(n => {
+    const v = _visitasPorNegocio.get(n.id);
+    return `
     <tr>
       <td>${esc(n.nombre)}</td>
       <td>${esc(n.whatsapp || "—")}</td>
@@ -143,7 +150,10 @@ function pintarNegocios(negocios) {
         </select>
       </td>
       <td style="text-align:center"><input type="checkbox" data-impl="${n.id}" ${n.contaclub_implementacion_pagada ? "checked" : ""}></td>
-    </tr>`).join("");
+      <td style="text-align:right">${nf.format(v?.visitas_30d || 0)}</td>
+      <td style="text-align:right">${nf.format(v?.visitas_total || 0)}</td>
+    </tr>`;
+  }).join("");
   $$("[data-plan]", cont).forEach(sel => sel.addEventListener("change", () => guardarNegocio(sel.dataset.plan)));
   $$("[data-impl]", cont).forEach(chk => chk.addEventListener("change", () => guardarNegocio(chk.dataset.impl)));
 }
