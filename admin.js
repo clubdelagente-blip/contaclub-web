@@ -30,6 +30,7 @@ async function iniciar() {
   $("#plan-cancelar")?.addEventListener("click", resetFormPlan);
   $("#anuncio-guardar")?.addEventListener("click", guardarAnuncio);
   $("#anuncio-cancelar")?.addEventListener("click", resetFormAnuncio);
+  $("#anuncio-imagen-file")?.addEventListener("change", onElegirImagenAnuncio);
   $("#pago-guardar")?.addEventListener("click", guardarConfigPago);
   $("#pago-qr-url")?.addEventListener("input", pintarPreviewQr);
 
@@ -237,7 +238,10 @@ function cargarAnuncioEnForm(id) {
   $("#anuncio-id").value = a.id;
   $("#anuncio-titulo").value = a.titulo || "";
   $("#anuncio-descripcion").value = a.descripcion || "";
-  $("#anuncio-imagen").value = a.imagen_url || "";
+  $("#anuncio-imagen-url").value = a.imagen_url || "";
+  $("#anuncio-imagen-file").value = "";
+  _anuncioImagenPendiente = null;
+  pintarPreviewImagenAnuncio(a.imagen_url || "");
   $("#anuncio-link").value = a.link || "";
   $("#anuncio-activo").checked = !!a.activo;
   $("#anuncio-form-titulo").textContent = "Editar anuncio";
@@ -246,24 +250,55 @@ function cargarAnuncioEnForm(id) {
 }
 function resetFormAnuncio() {
   $("#anuncio-id").value = "";
-  ["anuncio-titulo", "anuncio-descripcion", "anuncio-imagen", "anuncio-link"].forEach(id => { const el = $(`#${id}`); if (el) el.value = ""; });
+  ["anuncio-titulo", "anuncio-descripcion", "anuncio-imagen-url", "anuncio-link"].forEach(id => { const el = $(`#${id}`); if (el) el.value = ""; });
+  $("#anuncio-imagen-file").value = "";
+  _anuncioImagenPendiente = null;
+  pintarPreviewImagenAnuncio("");
   $("#anuncio-activo").checked = true;
   $("#anuncio-form-titulo").textContent = "Crear anuncio";
   $("#anuncio-cancelar").hidden = true;
 }
+// La imagen es opcional -- sin ella, el anuncio se ve igual que un aviso
+// propio (fondo degradado, ver avisoSlideHtml en carta.js), solo que
+// marcado "Publicidad" en vez de "Promoción".
+let _anuncioImagenPendiente = null;
+function onElegirImagenAnuncio(e) {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  _anuncioImagenPendiente = file;
+  const reader = new FileReader();
+  reader.onload = () => pintarPreviewImagenAnuncio(reader.result);
+  reader.readAsDataURL(file);
+}
+function pintarPreviewImagenAnuncio(src) {
+  const cont = $("#anuncio-imagen-preview");
+  if (!cont) return;
+  cont.innerHTML = src ? `<img src="${esc(src)}" alt="" style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid var(--linea)">` : "";
+}
 async function guardarAnuncio() {
   const titulo = $("#anuncio-titulo")?.value.trim();
-  const imagen = $("#anuncio-imagen")?.value.trim();
-  if (!titulo || !imagen) { alert("El título y la imagen son obligatorios"); return; }
+  if (!titulo) { alert("Escribe el título"); return; }
+  const btn = $("#anuncio-guardar");
+  btn.disabled = true; btn.textContent = "Guardando…";
+  let imagenUrl = $("#anuncio-imagen-url")?.value.trim() || null;
+  if (_anuncioImagenPendiente) {
+    const ext = (_anuncioImagenPendiente.name.split(".").pop() || "jpg").toLowerCase();
+    const path = `contaclub-anuncio-${Date.now()}-${Math.random().toString(36).substr(2, 5)}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("contenido").upload(path, _anuncioImagenPendiente, { upsert: true });
+    if (upErr) {
+      btn.disabled = false; btn.textContent = "Guardar anuncio";
+      alert("No se pudo subir la imagen: " + upErr.message);
+      return;
+    }
+    imagenUrl = supabase.storage.from("contenido").getPublicUrl(path).data.publicUrl;
+  }
   const payload = {
-    titulo, imagen_url: imagen,
+    titulo, imagen_url: imagenUrl,
     descripcion: $("#anuncio-descripcion")?.value.trim() || null,
     link: $("#anuncio-link")?.value.trim() || null,
     activo: $("#anuncio-activo")?.checked ?? true,
   };
   const id = $("#anuncio-id")?.value;
-  const btn = $("#anuncio-guardar");
-  btn.disabled = true; btn.textContent = "Guardando…";
   const { error } = id
     ? await supabase.from("contaclub_anuncios").update(payload).eq("id", id)
     : await supabase.from("contaclub_anuncios").insert({ ...payload, orden: _anuncios.length });

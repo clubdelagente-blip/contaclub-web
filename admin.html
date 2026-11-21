@@ -126,7 +126,12 @@
           <input type="hidden" id="anuncio-id">
           <div class="cc-campo"><label>Título</label><input id="anuncio-titulo" placeholder="Ej: Anúnciate aquí"></div>
           <div class="cc-campo"><label>Descripción (opcional)</label><input id="anuncio-descripcion" placeholder="Una línea corta"></div>
-          <div class="cc-campo"><label>Imagen (URL)</label><input id="anuncio-imagen" type="url" placeholder="https://..."></div>
+          <div class="cc-campo">
+            <label>Imagen (opcional)</label>
+            <input type="hidden" id="anuncio-imagen-url">
+            <input id="anuncio-imagen-file" type="file" accept="image/*">
+            <div id="anuncio-imagen-preview" style="margin-top:10px"></div>
+          </div>
           <div class="cc-campo"><label>Link al tocar (opcional)</label><input id="anuncio-link" type="url" placeholder="https://..."></div>
           <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tinta-60);margin-bottom:16px"><input type="checkbox" id="anuncio-activo" checked style="width:auto"> Activo (se muestra ya mismo)</label>
           <div style="display:flex;gap:10px">
@@ -159,6 +164,6 @@
     </main>
   </div>
 
-  <script type="module" src="admin.js?v=2"></script>
+  <script type="module" src="admin.js?v=3"></script>
 </body>
 </html>
