@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagar implementación — ContaClub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=143">
+  <link rel="stylesheet" href="app.css?v=6">
+</head>
+<body>
+  <div class="cc-wrap">
+    <a href="index.html" class="cc-brand" style="text-decoration:none">Conta<span>Club</span></a>
+    <div class="cc-card">
+      <div id="pi-wrap">
+        <h1>Último paso: la implementación</h1>
+        <p class="cc-sub" id="pi-sub">Configuramos tu carta digital y tu contabilidad por una sola vez.</p>
+        <p class="cc-error" id="pi-error" hidden></p>
+
+        <div style="background:var(--crema-2);border-radius:14px;padding:18px;margin-bottom:18px;text-align:center">
+          <div style="font-size:13px;color:var(--tinta-45);margin-bottom:4px">Total a pagar</div>
+          <div id="pi-monto" style="font-size:32px;font-weight:700;color:var(--verde)">—</div>
+          <div id="pi-qr-wrap" style="margin-top:14px" hidden>
+            <img id="pi-qr" style="width:160px;height:160px;object-fit:contain;border-radius:10px;background:#fff" alt="QR de pago">
+          </div>
+          <div id="pi-llave-wrap" style="margin-top:10px" hidden>
+            <div style="font-size:13px;color:var(--tinta-45)">Llave de pago</div>
+            <div id="pi-llave" style="font-weight:600;font-size:16px"></div>
+          </div>
+        </div>
+
+        <div class="cc-campo">
+          <label>Sube el comprobante de pago *</label>
+          <input type="file" id="pi-comprobante" accept="image/*,.pdf">
+        </div>
+        <button type="button" class="btn btn--primario" id="pi-btn" style="width:100%;justify-content:center">Enviar comprobante</button>
+      </div>
+      <div class="cc-exito" id="pi-exito" hidden>
+        <div class="cc-exito__check">✓</div>
+        <h1 style="text-align:center">¡Listo!</h1>
+        <p>Recibimos tu comprobante. En cuanto lo confirmemos, tu cuenta queda activa -- mientras tanto ya puedes entrar y dejar todo armado.</p>
+        <a href="dashboard.html" class="btn btn--primario" style="width:100%;justify-content:center;margin-top:10px">Entrar a mi panel</a>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="pagar-implementacion.js"></script>
+</body>
+</html>

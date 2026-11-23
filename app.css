@@ -149,3 +149,17 @@ body { background: var(--crema); min-height: 100vh; }
 .cc-metric { background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 16px 18px; }
 .cc-metric__n { display: block; font-family: var(--cuerpo); font-variant-numeric: tabular-nums; letter-spacing: -.01em; font-size: 22px; color: var(--tinta); }
 .cc-metric__lbl { font-size: 12px; color: var(--tinta-60); }
+
+/* Landing (index.html): beneficios + planes reales (ver index.js). */
+.cc-beneficios { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 36px 0 44px; }
+.cc-beneficio { display: flex; gap: 12px; align-items: flex-start; background: #fff; border: 1px solid var(--linea); border-radius: 14px; padding: 16px 18px; }
+.cc-beneficio__ic { font-size: 24px; flex: none; line-height: 1; }
+.cc-beneficio b { display: block; font-size: 14.5px; color: var(--tinta); margin-bottom: 2px; }
+.cc-beneficio p { font-size: 12.5px; color: var(--tinta-60); line-height: 1.45; margin: 0; }
+.cc-planes__titulo { font-family: var(--cuerpo); font-weight: 700; letter-spacing: -.01em; font-size: 24px; color: var(--tinta); text-align: center; margin: 0 0 6px; }
+.cc-planes__sub { font-size: 13px; color: var(--tinta-60); text-align: center; margin: 0 0 24px; }
+.cc-planes { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; margin-bottom: 36px; }
+.cc-plan { background: #fff; border: 1.5px solid var(--linea); border-radius: 16px; padding: 22px; }
+.cc-plan__nombre { font-weight: 700; font-size: 16px; color: var(--tinta); margin-bottom: 10px; }
+.cc-plan__impl { font-size: 12.5px; color: var(--tinta-60); margin-bottom: 8px; }
+.cc-plan__cobro { font-family: var(--cuerpo); font-weight: 700; font-size: 22px; color: var(--verde); }

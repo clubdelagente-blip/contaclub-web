@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tu perfil — ContaClub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=143">
+  <link rel="stylesheet" href="app.css?v=6">
+</head>
+<body>
+  <div class="cc-wrap">
+    <a href="index.html" class="cc-brand" style="text-decoration:none">Conta<span>Club</span></a>
+    <div class="cc-card">
+      <h1>Ya casi -- tu perfil</h1>
+      <p class="cc-sub">Así es como te van a ver tus clientes en tu carta digital.</p>
+      <p class="cc-error" id="fp-error" hidden></p>
+
+      <div style="text-align:center;margin-bottom:18px">
+        <div id="fp-preview" style="width:92px;height:92px;border-radius:50%;background:var(--crema-2) center/cover no-repeat;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--tinta-45)">🏪</div>
+        <input type="file" id="fp-foto" accept="image/*" style="margin:0 auto;display:block;max-width:220px">
+      </div>
+
+      <div class="cc-campo"><label>Nombre del negocio *</label><input id="fp-nombre" type="text" required></div>
+      <button type="button" class="btn btn--primario" id="fp-btn" style="width:100%;justify-content:center">Continuar</button>
+    </div>
+  </div>
+  <script type="module" src="foto-perfil.js"></script>
+</body>
+</html>

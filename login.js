@@ -15,19 +15,26 @@ const $ = (s) => document.querySelector(s);
 async function crearFilasNegocioSiHacenFalta(userId) {
   let datos;
   try { datos = JSON.parse(localStorage.getItem("contaclub_pending_registro") || "null"); } catch { datos = null; }
-  if (!datos) return;
+  if (!datos) return false;
   const { data: yaExiste } = await supabase.from("perfiles").select("id").eq("id", userId).maybeSingle();
+  let seCreo = false;
   if (!yaExiste) {
     await supabase.from("perfiles").insert({ id: userId, rol: "aliado", nombre: datos.nombre, whatsapp: datos.whatsapp || null });
     // activo:true -- ver la nota en registro.js, "activo" es lo que lee
     // la propia carta pública del negocio, no el blindaje del Directorio
-    // (eso lo hace contaclub_standalone aparte).
+    // (eso lo hace contaclub_standalone aparte). El plan se eligió en
+    // index.html antes de registrarse -- sigue en localStorage porque este
+    // camino (confirmar correo) nunca pasó por el guardado inmediato.
+    let planId = null;
+    try { planId = localStorage.getItem("contaclub_plan_id") || null; } catch {}
     await supabase.from("aliados").insert({
-      user_id: userId, nombre: datos.nombre, categoria: datos.categoria || null, whatsapp: datos.whatsapp || null,
-      contaclub_standalone: true, activo: true,
+      user_id: userId, nombre: datos.nombre, whatsapp: datos.whatsapp || null,
+      contaclub_standalone: true, activo: true, contaclub_plan_id: planId,
     });
+    seCreo = true;
   }
-  try { localStorage.removeItem("contaclub_pending_registro"); } catch {}
+  try { localStorage.removeItem("contaclub_pending_registro"); localStorage.removeItem("contaclub_plan_id"); } catch {}
+  return seCreo;
 }
 
 $("#login-form")?.addEventListener("submit", async (e) => {
@@ -48,7 +55,8 @@ $("#login-form")?.addEventListener("submit", async (e) => {
     err.hidden = false;
     return;
   }
-  await crearFilasNegocioSiHacenFalta(data.user.id);
+  const cuentaRecienCreada = await crearFilasNegocioSiHacenFalta(data.user.id);
+  if (cuentaRecienCreada) { location.href = "foto-perfil.html"; return; }
   // Un admin del Club (mismo auth.users, panel distinto) entra directo al
   // panel de ContaClub en vez del dashboard de negocio -- ese ni le aplica.
   const { data: perfil } = await supabase.from("perfiles").select("rol").eq("id", data.user.id).maybeSingle();

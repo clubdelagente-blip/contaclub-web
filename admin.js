@@ -120,7 +120,7 @@ async function guardarPlan() {
 async function cargarNegocios() {
   const [{ data }, { data: visitas }] = await Promise.all([
     supabase.from("aliados")
-      .select("id, nombre, whatsapp, contaclub_plan_id, contaclub_implementacion_pagada")
+      .select("id, nombre, whatsapp, contaclub_plan_id, contaclub_implementacion_pagada, contaclub_implementacion_comprobante_url")
       .eq("contaclub_standalone", true).order("nombre"),
     supabase.rpc("contaclub_visitas_por_negocio"),
   ]);
@@ -134,7 +134,7 @@ function pintarNegocios(negocios) {
   const cont = $("#negocios-lista");
   if (!cont) return;
   if (!negocios.length) {
-    cont.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay negocios de ContaClub registrados.</td></tr>`;
+    cont.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay negocios de ContaClub registrados.</td></tr>`;
     return;
   }
   cont.innerHTML = negocios.map(n => {
@@ -149,6 +149,7 @@ function pintarNegocios(negocios) {
           ${_planes.map(p => `<option value="${p.id}" ${n.contaclub_plan_id === p.id ? "selected" : ""}>${esc(p.nombre)}</option>`).join("")}
         </select>
       </td>
+      <td>${n.contaclub_implementacion_comprobante_url ? `<a href="${n.contaclub_implementacion_comprobante_url}" target="_blank" rel="noopener">Ver</a>` : "—"}</td>
       <td style="text-align:center"><input type="checkbox" data-impl="${n.id}" ${n.contaclub_implementacion_pagada ? "checked" : ""}></td>
       <td style="text-align:right">${nf.format(v?.visitas_30d || 0)}</td>
       <td style="text-align:right">${nf.format(v?.visitas_total || 0)}</td>

@@ -17,13 +17,19 @@ const $ = (s) => document.querySelector(s);
 // Directorio/landing del Club NO depende de "activo": ya lo hace
 // contaclub_standalone (ver el filtro en directorio.js/app-cms.js del
 // repo principal), así que "activo" puede quedarse en true sin riesgo.
+// El plan se elige en index.html ANTES de crear la cuenta (localStorage,
+// ver index.js) -- se asigna acá, a la fila de "aliados" recién creada,
+// nunca antes (no existe negocio_id todavía mientras tanto).
+function leerPlanElegido() {
+  try { return localStorage.getItem("contaclub_plan_id") || null; } catch { return null; }
+}
 async function crearFilasNegocio(userId, datos) {
   const { error: perfilError } = await supabase.from("perfiles").insert({
     id: userId, rol: "aliado", nombre: datos.nombre, whatsapp: datos.whatsapp || null,
   });
   const { error: aliadoError } = await supabase.from("aliados").insert({
-    user_id: userId, nombre: datos.nombre, categoria: datos.categoria || null, whatsapp: datos.whatsapp || null,
-    contaclub_standalone: true, activo: true,
+    user_id: userId, nombre: datos.nombre, whatsapp: datos.whatsapp || null,
+    contaclub_standalone: true, activo: true, contaclub_plan_id: leerPlanElegido(),
   });
   return perfilError || aliadoError || null;
 }
@@ -32,7 +38,6 @@ $("#registro-form")?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const datos = {
     nombre: $("#reg-nombre").value.trim(),
-    categoria: $("#reg-categoria").value.trim(),
     whatsapp: $("#reg-whatsapp").value.trim(),
   };
   const email = $("#reg-email").value.trim();
@@ -87,5 +92,6 @@ $("#registro-form")?.addEventListener("submit", async (e) => {
     err.hidden = false;
     return;
   }
-  location.href = "dashboard.html";
+  try { localStorage.removeItem("contaclub_plan_id"); } catch {}
+  location.href = "foto-perfil.html";
 });
