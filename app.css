@@ -58,7 +58,9 @@ body { background: var(--crema); min-height: 100vh; }
 
 .cc-main { flex: 1; min-width: 0; padding: 28px 36px 60px; }
 .cc-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; gap: 16px; flex-wrap: wrap; }
-.cc-topbar__title { font-family: var(--display); font-size: 24px; color: var(--tinta); margin: 0; }
+/* Inter, no Anton (--display) -- Anton se ve negro/condensado sin importar
+   el peso que se le ponga. Resalta por tamaño/espaciado, no por negrilla. */
+.cc-topbar__title { font-family: var(--cuerpo); font-size: 26px; font-weight: 600; letter-spacing: -.01em; color: var(--tinta); margin: 0; }
 .cc-topbar__sub { margin: 4px 0 0; font-size: 13px; color: var(--tinta-60); }
 
 @media (max-width: 860px) {
