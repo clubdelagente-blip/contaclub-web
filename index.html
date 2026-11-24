@@ -75,7 +75,7 @@
   .catblock li::marker{color:var(--accent)}
   .catblock .kicker{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
 
-  .packages{display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:18px}
+  .packages{display:grid;grid-template-columns:repeat(3, 1fr);gap:18px;align-items:stretch}
   .package-col{display:flex;flex-direction:column;gap:10px}
   .plan-head{display:flex;flex-direction:column;gap:3px;text-align:center}
   .plan-head .plan-name{font-family:'Space Grotesk';font-weight:700;font-size:17px}
@@ -127,7 +127,8 @@
   .closing h2{font-size:22px}
   .closing .legal{font-size:12px;color:var(--muted);margin-top:8px}
 
-  @media (max-width:620px){ .packages{grid-template-columns:1fr} }
+  @media (max-width:700px){ .packages{grid-template-columns:repeat(2, 1fr)} }
+  @media (max-width:480px){ .packages{grid-template-columns:1fr} }
   @media (max-width:480px){ .hero-stats{gap:20px} }
 </style>
 </head>
