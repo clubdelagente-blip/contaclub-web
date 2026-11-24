@@ -96,9 +96,9 @@
           <p class="cc-sub">Deja "Mensualidad" vacía si el cobro es por volumen de facturación; deja "Umbral" y "% sobre facturación" vacíos si el plan cobra una mensualidad fija.</p>
           <input type="hidden" id="plan-id">
           <div class="cc-campo"><label>Nombre</label><input id="plan-nombre" placeholder="Ej: Paquete 1 · Básico"></div>
-          <div class="cc-campo"><label>Implementación (pago único)</label><input id="plan-implementacion" type="number" min="0" placeholder="400000"></div>
-          <div class="cc-campo"><label>Mensualidad fija (vacío si es por volumen)</label><input id="plan-mensualidad" type="number" min="0" placeholder="49900"></div>
-          <div class="cc-campo"><label>Umbral de facturación mensual (vacío si no aplica)</label><input id="plan-umbral" type="number" min="0" placeholder="10000000"></div>
+          <div class="cc-campo"><label>Implementación (pago único)</label><input id="plan-implementacion" type="text" inputmode="numeric" placeholder="Ej: 400.000"></div>
+          <div class="cc-campo"><label>Mensualidad fija (vacío si es por volumen)</label><input id="plan-mensualidad" type="text" inputmode="numeric" placeholder="Ej: 49.900"></div>
+          <div class="cc-campo"><label>Umbral de facturación mensual (vacío si no aplica)</label><input id="plan-umbral" type="text" inputmode="numeric" placeholder="Ej: 10.000.000"></div>
           <div class="cc-campo"><label>% sobre la facturación que supera el umbral</label><input id="plan-porcentaje" type="number" min="0" step="0.01" placeholder="0.3"></div>
           <div class="cc-campo"><label>Nivel de acceso</label>
             <select id="plan-nivel">
@@ -171,6 +171,6 @@
     </main>
   </div>
 
-  <script type="module" src="admin.js?v=5"></script>
+  <script type="module" src="admin.js?v=6"></script>
 </body>
 </html>

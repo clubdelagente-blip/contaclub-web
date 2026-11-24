@@ -15,6 +15,17 @@ const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 const nf = new Intl.NumberFormat("es-CO");
 const COP = (n) => "$" + nf.format(Math.round(n || 0));
 function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+// Los campos de plata del form de Planes son texto, no <input type="number">
+// -- así se pueden escribir con puntos de miles ("400.000") sin que el
+// navegador los lea como decimales (Number("400.000") da 400, no 400000).
+function formatearInputMoneda(input) {
+  if (!input) return;
+  input.oninput = () => {
+    const digits = input.value.replace(/\D/g, "");
+    input.value = digits ? Number(digits).toLocaleString("es-CO") : "";
+  };
+}
+function valorMoneda(input) { return parseInt((input?.value || "").replace(/\D/g, "")) || 0; }
 
 async function iniciar() {
   const { data: { session } } = await supabase.auth.getSession();
@@ -28,6 +39,7 @@ async function iniciar() {
   $("#calcular-cobros-btn")?.addEventListener("click", calcularCobros);
   $("#plan-guardar")?.addEventListener("click", guardarPlan);
   $("#plan-cancelar")?.addEventListener("click", resetFormPlan);
+  ["plan-implementacion", "plan-mensualidad", "plan-umbral"].forEach(id => formatearInputMoneda($(`#${id}`)));
   $("#anuncio-guardar")?.addEventListener("click", guardarAnuncio);
   $("#anuncio-cancelar")?.addEventListener("click", resetFormAnuncio);
   $("#anuncio-imagen-file")?.addEventListener("change", onElegirImagenAnuncio);
@@ -78,9 +90,9 @@ function cargarPlanEnForm(id) {
   if (!p) return;
   $("#plan-id").value = p.id;
   $("#plan-nombre").value = p.nombre || "";
-  $("#plan-implementacion").value = p.implementacion ?? "";
-  $("#plan-mensualidad").value = p.mensualidad ?? "";
-  $("#plan-umbral").value = p.umbral_facturacion ?? "";
+  $("#plan-implementacion").value = p.implementacion ? Number(p.implementacion).toLocaleString("es-CO") : "";
+  $("#plan-mensualidad").value = p.mensualidad ? Number(p.mensualidad).toLocaleString("es-CO") : "";
+  $("#plan-umbral").value = p.umbral_facturacion ? Number(p.umbral_facturacion).toLocaleString("es-CO") : "";
   $("#plan-porcentaje").value = p.porcentaje_volumen != null ? Number(p.porcentaje_volumen) * 100 : "";
   $("#plan-nivel").value = String(p.nivel ?? 2);
   $("#plan-caracteristicas").value = p.caracteristicas || "";
@@ -103,9 +115,9 @@ async function guardarPlan() {
   const id = $("#plan-id")?.value;
   const payload = {
     nombre,
-    implementacion: Number($("#plan-implementacion")?.value) || 0,
-    mensualidad: $("#plan-mensualidad")?.value ? Number($("#plan-mensualidad").value) : null,
-    umbral_facturacion: $("#plan-umbral")?.value ? Number($("#plan-umbral").value) : null,
+    implementacion: valorMoneda($("#plan-implementacion")),
+    mensualidad: $("#plan-mensualidad")?.value ? valorMoneda($("#plan-mensualidad")) : null,
+    umbral_facturacion: $("#plan-umbral")?.value ? valorMoneda($("#plan-umbral")) : null,
     porcentaje_volumen: $("#plan-porcentaje")?.value ? Number($("#plan-porcentaje").value) / 100 : null,
     nivel: Number($("#plan-nivel")?.value) || 2,
     caracteristicas: $("#plan-caracteristicas")?.value.trim() || null,
