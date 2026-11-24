@@ -31,7 +31,11 @@ async function cargar() {
     supabase.from("contaclub_config").select("*").eq("id", true).maybeSingle(),
   ]);
 
-  $("#pi-monto").textContent = COP(plan?.implementacion ?? 0);
+  // Básico y Pro no cobran implementación (ver el documento de planes) --
+  // si el plan elegido no tiene costo, este paso no aplica y entra directo.
+  if (!plan?.implementacion) { location.href = "dashboard.html"; return; }
+
+  $("#pi-monto").textContent = COP(plan.implementacion);
   if (plan?.nombre) $("#pi-sub").textContent = `Implementación del plan ${plan.nombre} -- se paga una sola vez.`;
 
   if (config?.llave_qr_url) { $("#pi-qr").src = config.llave_qr_url; $("#pi-qr-wrap").hidden = false; }

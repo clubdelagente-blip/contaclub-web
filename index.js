@@ -2,12 +2,11 @@
    ContaClub — landing pública. Trae los planes reales desde
    contaclub_planes (el mismo panel que administra el Admin de
    ContaClub, ver admin.html) en vez de precios quemados acá -- si
-   cambian un precio en el Admin, se refleja solo, incluyendo la
-   caja "¿Cuál te conviene?" (el punto de equilibrio se recalcula
-   con los números reales, no está escrito a mano). Elegir un plan
-   solo GUARDA la elección (localStorage) y manda a registro.html --
-   el plan de verdad se asigna a la fila de "aliados" recién creada
-   (ver registro.js), nunca antes de que exista la cuenta.
+   cambian un precio o las características en el Admin, se reflejan
+   solas. Elegir un plan solo GUARDA la elección (localStorage) y
+   manda a registro.html -- el plan de verdad se asigna a la fila de
+   "aliados" recién creada (ver registro.js), nunca antes de que
+   exista la cuenta.
    ============================================================ */
 import { supabase } from 'https://elclubdelagente.com/supabase.js';
 
@@ -18,10 +17,36 @@ const pct = (n) => Number(n * 100).toFixed(2).replace(/0+$/, "").replace(/\.$/, 
 
 function receiptHtml(p) {
   const esFijo = p.mensualidad != null;
-  const planFor = esFijo
-    ? "Para negocios con ventas ya estables por la carta"
-    : "Para negocios que están probando el pedido digital";
-  const totalPrimerMes = esFijo ? Number(p.implementacion || 0) + Number(p.mensualidad || 0) : Number(p.implementacion || 0);
+  const planFor = p.nivel === 1
+    ? "Para negocios que están arrancando con el pedido digital"
+    : esFijo
+    ? "Para negocios con ventas estables que quieren todo incluido"
+    : "Para negocios que no quieren mensualidad fija";
+  const features = String(p.caracteristicas || "").split("\n").map(f => f.trim()).filter(Boolean);
+  const featuresHtml = features.length ? `<ul class="receipt-features">${features.map(f => `<li>${esc(f)}</li>`).join("")}</ul>` : "";
+
+  let cuerpo;
+  if (esFijo) {
+    const totalPrimerMes = Number(p.implementacion || 0) + Number(p.mensualidad || 0);
+    cuerpo = `
+      <div class="line-item"><span class="desc">Implementación (una vez)</span><span class="fill"></span><span class="amt mono">${COP(p.implementacion)}</span></div>
+      <div class="line-item"><span class="desc">Mensualidad, todo incluido</span><span class="fill"></span><span class="amt mono">${COP(p.mensualidad)}</span></div>
+      <hr>
+      <div class="line-item total"><span class="desc">Total primer mes</span><span class="fill"></span><span class="amt mono">${COP(totalPrimerMes)}</span></div>
+      <div style="text-align:center"><span class="badge-cero">Desde el mes 2: ${COP(p.mensualidad)}/mes fijo</span></div>
+      <p class="note">COP · 0% comisión por pedido · Cancela cuando quieras</p>`;
+  } else {
+    const leyendaPct = p.umbral_facturacion != null
+      ? `de lo que factures sobre ${COP(p.umbral_facturacion)}/mes, cobrado cada mes`
+      : `de todo lo que factures por la carta, cada mes`;
+    cuerpo = `
+      <div class="line-item total"><span class="desc">Para empezar</span><span class="fill"></span><span class="amt mono">$0</span></div>
+      <div class="recurring-row"><span class="amt mono">${pct(p.porcentaje_volumen)}%</span><span class="lbl">${leyendaPct}</span></div>
+      ${p.implementacion ? `
+      <div class="line-item" style="margin-top:10px"><span class="desc">Implementación personalizada (opcional)</span><span class="fill"></span><span class="amt mono">${COP(p.implementacion)}</span></div>
+      <p class="note" style="margin-top:4px">Si la contratas, no se te cobra el ${pct(p.porcentaje_volumen)}% durante los primeros 2 meses.</p>` : ""}
+      <p class="note">COP · Sin mensualidad fija · Cancela cuando quieras</p>`;
+  }
 
   return `
   <div class="package-col">
@@ -31,38 +56,16 @@ function receiptHtml(p) {
       <h3>Tu factura ContaClub</h3>
       <div class="brand-name">${esc(p.nombre)}</div>
       <hr>
-      <div class="line-item"><span class="desc">Implementación (una vez)</span><span class="fill"></span><span class="amt mono">${COP(p.implementacion)}</span></div>
-      ${esFijo ? `<div class="line-item"><span class="desc">Mensualidad, todo incluido</span><span class="fill"></span><span class="amt mono">${COP(p.mensualidad)}</span></div>` : ""}
-      <hr>
-      <div class="line-item total"><span class="desc">${esFijo ? "Total primer mes" : "Para empezar"}</span><span class="fill"></span><span class="amt mono">${COP(totalPrimerMes)}</span></div>
-      ${esFijo
-        ? `<div style="text-align:center"><span class="badge-cero">Desde el mes 2: ${COP(p.mensualidad)}/mes fijo</span></div>`
-        : `<div class="recurring-row"><span class="amt mono">${pct(p.porcentaje_volumen)}%</span><span class="lbl">de lo que factures sobre ${COP(p.umbral_facturacion)}/mes, cobrado cada mes</span></div>`}
-      <p class="note">COP · ${esFijo ? "0% comisión por pedido" : "Sin mensualidad fija"} · Cancela cuando quieras</p>
+      ${cuerpo}
+      ${featuresHtml}
       <div class="elegir"><button type="button" class="btn btn--primario" data-plan="${p.id}" style="width:100%">Elegir este plan</button></div>
     </div>
     <div class="receipt-edge bottom"></div>
   </div>`;
 }
 
-function decisionHtml(planes) {
-  const fijo = planes.find(p => p.mensualidad != null);
-  const variable = planes.find(p => p.umbral_facturacion != null && p.porcentaje_volumen != null);
-  if (!fijo || !variable) return "";
-  const breakeven = Number(variable.umbral_facturacion) + Number(fijo.mensualidad) / Number(variable.porcentaje_volumen);
-  return `
-  <div class="decision">
-    <span class="tag">¿Cuál te conviene?</span>
-    <p>El punto de equilibrio está en cuánto vendes por la carta cada mes:</p>
-    <p class="calc">${COP(variable.umbral_facturacion)} + ${COP(fijo.mensualidad)} ÷ ${pct(variable.porcentaje_volumen)}% ≈ ${COP(breakeven)} COP de pedidos pagados al mes</p>
-    <p><strong>Menos de ~${COP(breakeven)}/mes en pedidos:</strong> ${esc(variable.nombre)} te cuesta menos -- pagas poco en los meses flojos y nada de mensualidad fija mientras validas si el pedido digital funciona en tu negocio.</p>
-    <p><strong>Más de ~${COP(breakeven)}/mes en pedidos:</strong> ${esc(fijo.nombre)} te sale más barato, porque la mensualidad no sube así vendas más.</p>
-  </div>`;
-}
-
 async function cargarPlanes() {
   const cont = $("#planes-lista");
-  const decisionCont = $("#decision-box");
   if (!cont) return;
   const { data: planes } = await supabase.from("contaclub_planes").select("*").eq("activo", true).order("orden");
   if (!planes?.length) {
@@ -70,7 +73,6 @@ async function cargarPlanes() {
     return;
   }
   cont.innerHTML = `<div class="packages">${planes.map(receiptHtml).join("")}</div>`;
-  if (decisionCont) decisionCont.innerHTML = decisionHtml(planes);
   cont.querySelectorAll("[data-plan]").forEach(btn => btn.addEventListener("click", () => {
     try { localStorage.setItem("contaclub_plan_id", btn.dataset.plan); } catch {}
     location.href = "registro.html";

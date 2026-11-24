@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=143">
-  <link rel="stylesheet" href="app.css?v=7">
+  <link rel="stylesheet" href="app.css?v=8">
 </head>
 <body>
   <div class="cc-app">
@@ -100,6 +100,13 @@
           <div class="cc-campo"><label>Mensualidad fija (vacío si es por volumen)</label><input id="plan-mensualidad" type="number" min="0" placeholder="49900"></div>
           <div class="cc-campo"><label>Umbral de facturación mensual (vacío si no aplica)</label><input id="plan-umbral" type="number" min="0" placeholder="10000000"></div>
           <div class="cc-campo"><label>% sobre la facturación que supera el umbral</label><input id="plan-porcentaje" type="number" min="0" step="0.01" placeholder="0.3"></div>
+          <div class="cc-campo"><label>Nivel de acceso</label>
+            <select id="plan-nivel">
+              <option value="1">Básico -- sin carta pública/QR, mesas, promociones ni métricas</option>
+              <option value="2" selected>Pro o superior -- todo</option>
+            </select>
+          </div>
+          <div class="cc-campo"><label>Características para la landing (una por línea)</label><textarea id="plan-caracteristicas" rows="5" placeholder="Sistema de fidelización de clientes&#10;Gestión de pedidos desde el mostrador&#10;Registro de ingresos y gastos"></textarea></div>
           <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tinta-60);margin-bottom:16px"><input type="checkbox" id="plan-activo" checked style="width:auto"> Plan activo (disponible para asignar)</label>
           <div style="display:flex;gap:10px">
             <button type="button" class="btn btn--primario" id="plan-guardar">Guardar plan</button>
@@ -110,8 +117,8 @@
           <h1>Planes existentes</h1>
           <div class="cc-tabla-wrap">
             <table class="cc-tabla">
-              <thead><tr><th>Nombre</th><th>Implementación</th><th>Mensualidad</th><th>Umbral</th><th>%</th><th>Activo</th><th></th></tr></thead>
-              <tbody id="planes-lista"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
+              <thead><tr><th>Nombre</th><th>Implementación</th><th>Mensualidad</th><th>Umbral</th><th>%</th><th>Nivel</th><th>Activo</th><th></th></tr></thead>
+              <tbody id="planes-lista"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -164,6 +171,6 @@
     </main>
   </div>
 
-  <script type="module" src="admin.js?v=4"></script>
+  <script type="module" src="admin.js?v=5"></script>
 </body>
 </html>

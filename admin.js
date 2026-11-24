@@ -57,7 +57,7 @@ function pintarPlanes() {
   const cont = $("#planes-lista");
   if (!cont) return;
   if (!_planes.length) {
-    cont.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay planes creados.</td></tr>`;
+    cont.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay planes creados.</td></tr>`;
     return;
   }
   cont.innerHTML = _planes.map(p => `
@@ -67,6 +67,7 @@ function pintarPlanes() {
       <td>${p.mensualidad != null ? COP(p.mensualidad) + "/mes" : "—"}</td>
       <td>${p.umbral_facturacion != null ? COP(p.umbral_facturacion) : "—"}</td>
       <td>${p.porcentaje_volumen != null ? (Number(p.porcentaje_volumen) * 100).toFixed(2).replace(/\.?0+$/, "") + "%" : "—"}</td>
+      <td>${p.nivel === 1 ? "Básico" : "Pro+"}</td>
       <td>${p.activo ? "Sí" : "No"}</td>
       <td><button type="button" class="btn" data-editar-plan="${p.id}" style="padding:6px 12px;font-size:12px">Editar</button></td>
     </tr>`).join("");
@@ -81,6 +82,8 @@ function cargarPlanEnForm(id) {
   $("#plan-mensualidad").value = p.mensualidad ?? "";
   $("#plan-umbral").value = p.umbral_facturacion ?? "";
   $("#plan-porcentaje").value = p.porcentaje_volumen != null ? Number(p.porcentaje_volumen) * 100 : "";
+  $("#plan-nivel").value = String(p.nivel ?? 2);
+  $("#plan-caracteristicas").value = p.caracteristicas || "";
   $("#plan-activo").checked = !!p.activo;
   $("#plan-form-titulo").textContent = "Editar plan";
   $("#plan-cancelar").hidden = false;
@@ -88,7 +91,8 @@ function cargarPlanEnForm(id) {
 }
 function resetFormPlan() {
   $("#plan-id").value = "";
-  ["plan-nombre", "plan-implementacion", "plan-mensualidad", "plan-umbral", "plan-porcentaje"].forEach(id => { const el = $(`#${id}`); if (el) el.value = ""; });
+  ["plan-nombre", "plan-implementacion", "plan-mensualidad", "plan-umbral", "plan-porcentaje", "plan-caracteristicas"].forEach(id => { const el = $(`#${id}`); if (el) el.value = ""; });
+  $("#plan-nivel").value = "2";
   $("#plan-activo").checked = true;
   $("#plan-form-titulo").textContent = "Crear plan";
   $("#plan-cancelar").hidden = true;
@@ -96,15 +100,20 @@ function resetFormPlan() {
 async function guardarPlan() {
   const nombre = $("#plan-nombre")?.value.trim();
   if (!nombre) { alert("Escribe el nombre del plan"); return; }
+  const id = $("#plan-id")?.value;
   const payload = {
     nombre,
     implementacion: Number($("#plan-implementacion")?.value) || 0,
     mensualidad: $("#plan-mensualidad")?.value ? Number($("#plan-mensualidad").value) : null,
     umbral_facturacion: $("#plan-umbral")?.value ? Number($("#plan-umbral").value) : null,
     porcentaje_volumen: $("#plan-porcentaje")?.value ? Number($("#plan-porcentaje").value) / 100 : null,
+    nivel: Number($("#plan-nivel")?.value) || 2,
+    caracteristicas: $("#plan-caracteristicas")?.value.trim() || null,
     activo: $("#plan-activo")?.checked ?? true,
   };
-  const id = $("#plan-id")?.value;
+  // El "orden" solo se fija al crear -- editar un plan no debe moverlo de
+  // puesto en la landing (mismo patrón que guardarAnuncio).
+  if (!id) payload.orden = _planes.length;
   const btn = $("#plan-guardar");
   btn.disabled = true; btn.textContent = "Guardando…";
   const { error } = id
@@ -164,7 +173,15 @@ function pintarSelectPlanesEnNegocios() { if (_negociosActuales.length) pintarNe
 async function guardarNegocio(id) {
   const planId = $(`[data-plan="${id}"]`)?.value || null;
   const impl = $(`[data-impl="${id}"]`)?.checked || false;
-  await supabase.from("aliados").update({ contaclub_plan_id: planId, contaclub_implementacion_pagada: impl }).eq("id", id);
+  const payload = { contaclub_plan_id: planId, contaclub_implementacion_pagada: impl };
+  // Se guarda la fecha solo la primera vez que pasa a pagada -- los 2
+  // meses gratis de Premium se cuentan desde ese día (ver
+  // calcular_cobros_contaclub). Si se destilda y se vuelve a marcar por
+  // error, no se reinicia el conteo.
+  const anterior = _negociosActuales.find(n => n.id === id);
+  if (impl && !anterior?.contaclub_implementacion_pagada) payload.contaclub_implementacion_pagada_en = new Date().toISOString();
+  await supabase.from("aliados").update(payload).eq("id", id);
+  await cargarNegocios();
 }
 
 /* ---------- Cobros mensuales ---------- */
