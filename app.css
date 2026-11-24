@@ -47,7 +47,11 @@ body { background: var(--crema); min-height: 100vh; }
    se noten como tarjetas sobre el fondo, no solo por el borde. */
 .cc-app { display: flex; min-height: 100vh; align-items: stretch; }
 
-.cc-sidebar { width: 252px; flex: none; background: #fff; border-right: 1px solid var(--linea); padding: 28px 20px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; z-index: 10; }
+/* position: fixed, no sticky -- styles.css le pone overflow-x: hidden a
+   html/body, y eso rompe el "contexto de scroll" que necesita sticky para
+   quedarse pegado. Fixed no depende de eso -- siempre es relativo a la
+   ventana. Al sacarlo del flujo, .cc-main compensa con margin-left. */
+.cc-sidebar { width: 252px; flex: none; background: #fff; border-right: 1px solid var(--linea); padding: 28px 20px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 10; }
 .cc-sidebar__brand { display: flex; align-items: center; gap: 10px; margin-bottom: 34px; padding: 0 4px; min-width: 0; }
 .cc-sidebar__logo { width: 34px; height: 34px; border-radius: 10px; background: var(--verde); display: flex; align-items: center; justify-content: center; flex: none; }
 .cc-sidebar__nombre { font-family: var(--cuerpo); font-weight: 700; letter-spacing: -.01em; font-size: 17px; color: var(--tinta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -60,7 +64,7 @@ body { background: var(--crema); min-height: 100vh; }
 .cc-sidebar__spacer { flex: 1; }
 .cc-sidebar__nav--foot { border-top: 1px solid var(--linea); padding-top: 14px; margin-bottom: 0; }
 
-.cc-main { flex: 1; min-width: 0; padding: 28px 36px 60px; }
+.cc-main { flex: 1; min-width: 0; padding: 28px 36px 60px; margin-left: 252px; }
 .cc-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; gap: 16px; flex-wrap: wrap; }
 /* Inter, no Anton (--display) -- Anton se ve negro/condensado sin importar
    el peso que se le ponga. Resalta por tamaño/espaciado, no por negrilla. */
@@ -69,7 +73,8 @@ body { background: var(--crema); min-height: 100vh; }
 
 @media (max-width: 860px) {
   .cc-app { flex-direction: column; }
-  .cc-sidebar { width: 100%; height: auto; flex-direction: row; align-items: center; gap: 14px; padding: 14px 16px; border-right: none; border-bottom: 1px solid var(--linea); overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; }
+  .cc-sidebar { position: static; width: 100%; height: auto; flex-direction: row; align-items: center; gap: 14px; padding: 14px 16px; border-right: none; border-bottom: 1px solid var(--linea); overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; }
+  .cc-main { margin-left: 0; }
   .cc-sidebar__brand { margin-bottom: 0; flex: none; }
   .cc-sidebar__label { display: none; }
   .cc-sidebar__nav { flex-direction: row; margin-bottom: 0; }
