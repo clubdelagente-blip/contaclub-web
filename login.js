@@ -7,6 +7,7 @@
    ============================================================ */
 import { supabase } from 'https://elclubdelagente.com/supabase.js';
 import { iniciarConGoogle, botonGoogleHtml } from './google-auth.js';
+import { calcularActivoInicial } from './activacion.js';
 
 const $ = (s) => document.querySelector(s);
 
@@ -37,6 +38,7 @@ async function crearFilasNegocioSiHacenFalta(userId) {
     await supabase.from("aliados").insert({
       user_id: userId, nombre: datos.nombre, whatsapp: datos.whatsapp || null,
       contaclub_standalone: true, activo: true, contaclub_plan_id: planId,
+      contaclub_activo: await calcularActivoInicial(planId),
     });
     seCreo = true;
   }

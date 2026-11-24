@@ -9,6 +9,7 @@
    ============================================================ */
 import { supabase } from 'https://elclubdelagente.com/supabase.js';
 import { iniciarConGoogle, botonGoogleHtml } from './google-auth.js';
+import { calcularActivoInicial } from './activacion.js';
 
 const $ = (s) => document.querySelector(s);
 
@@ -31,12 +32,14 @@ function leerPlanElegido() {
   try { return localStorage.getItem("contaclub_plan_id") || null; } catch { return null; }
 }
 async function crearFilasNegocio(userId, datos) {
+  const planId = leerPlanElegido();
   const { error: perfilError } = await supabase.from("perfiles").insert({
     id: userId, rol: "aliado", nombre: datos.nombre, whatsapp: datos.whatsapp || null,
   });
   const { error: aliadoError } = await supabase.from("aliados").insert({
     user_id: userId, nombre: datos.nombre, whatsapp: datos.whatsapp || null,
-    contaclub_standalone: true, activo: true, contaclub_plan_id: leerPlanElegido(),
+    contaclub_standalone: true, activo: true, contaclub_plan_id: planId,
+    contaclub_activo: await calcularActivoInicial(planId),
   });
   return perfilError || aliadoError || null;
 }

@@ -15,6 +15,7 @@
    procesó) en vez de preguntar "¿hay sesión?" a ciegas.
    ============================================================ */
 import { supabase } from 'https://elclubdelagente.com/supabase.js';
+import { calcularActivoInicial } from './activacion.js';
 
 const $ = (s) => document.querySelector(s);
 
@@ -35,10 +36,12 @@ async function continuarConSesion(session) {
 
   if (!yaExiste) {
     const nombreGoogle = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email?.split("@")[0] || "Mi negocio";
+    const planId = leerPlanElegido();
     const { error: perfilError } = await supabase.from("perfiles").insert({ id: userId, rol: "aliado", nombre: nombreGoogle });
     const { error: aliadoError } = await supabase.from("aliados").insert({
       user_id: userId, nombre: nombreGoogle,
-      contaclub_standalone: true, activo: true, contaclub_plan_id: leerPlanElegido(),
+      contaclub_standalone: true, activo: true, contaclub_plan_id: planId,
+      contaclub_activo: await calcularActivoInicial(planId),
     });
     try { localStorage.removeItem("contaclub_plan_id"); } catch {}
     if (perfilError || aliadoError) {

@@ -137,11 +137,11 @@ async function guardarPlan() {
   await cargarPlanes();
 }
 
-/* ---------- Negocios (plan asignado + implementación pagada) ---------- */
+/* ---------- Negocios (plan asignado + activación + implementación) ---------- */
 async function cargarNegocios() {
   const [{ data }, { data: visitas }] = await Promise.all([
     supabase.from("aliados")
-      .select("id, nombre, whatsapp, contaclub_plan_id, contaclub_implementacion_pagada, contaclub_implementacion_comprobante_url")
+      .select("id, nombre, whatsapp, contaclub_plan_id, contaclub_activo, contaclub_implementacion_pagada, contaclub_implementacion_comprobante_url")
       .eq("contaclub_standalone", true).order("nombre"),
     supabase.rpc("contaclub_visitas_por_negocio"),
   ]);
@@ -150,16 +150,20 @@ async function cargarNegocios() {
 }
 let _negociosActuales = [];
 let _visitasPorNegocio = new Map();
+// Cuánto genera cada negocio -- suma del historial de contaclub_cobros_mensuales
+// (ver cargarCobros más abajo, que llena este mapa apenas carga esa pestaña).
+let _totalesPorNegocio = new Map();
 function pintarNegocios(negocios) {
   _negociosActuales = negocios;
   const cont = $("#negocios-lista");
   if (!cont) return;
   if (!negocios.length) {
-    cont.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay negocios de ContaClub registrados.</td></tr>`;
+    cont.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay negocios de ContaClub registrados.</td></tr>`;
     return;
   }
   cont.innerHTML = negocios.map(n => {
     const v = _visitasPorNegocio.get(n.id);
+    const t = _totalesPorNegocio.get(n.id);
     return `
     <tr>
       <td>${esc(n.nombre)}</td>
@@ -171,21 +175,26 @@ function pintarNegocios(negocios) {
         </select>
       </td>
       <td>${n.contaclub_implementacion_comprobante_url ? `<a href="${n.contaclub_implementacion_comprobante_url}" target="_blank" rel="noopener">Ver</a>` : "—"}</td>
+      <td style="text-align:center"><input type="checkbox" data-activo="${n.id}" ${n.contaclub_activo ? "checked" : ""}></td>
       <td style="text-align:center"><input type="checkbox" data-impl="${n.id}" ${n.contaclub_implementacion_pagada ? "checked" : ""}></td>
+      <td style="text-align:right">${COP(t?.facturacion || 0)}</td>
+      <td style="text-align:right">${COP(t?.pagado || 0)}</td>
       <td style="text-align:right">${nf.format(v?.visitas_30d || 0)}</td>
       <td style="text-align:right">${nf.format(v?.visitas_total || 0)}</td>
     </tr>`;
   }).join("");
   $$("[data-plan]", cont).forEach(sel => sel.addEventListener("change", () => guardarNegocio(sel.dataset.plan)));
   $$("[data-impl]", cont).forEach(chk => chk.addEventListener("change", () => guardarNegocio(chk.dataset.impl)));
+  $$("[data-activo]", cont).forEach(chk => chk.addEventListener("change", () => guardarNegocio(chk.dataset.activo)));
 }
-// Si los planes llegan/cambian después de pintar negocios, se repinta la
-// tabla para que el <select> de cada fila ya tenga las opciones correctas.
+// Si los planes/cobros llegan o cambian después de pintar negocios, se
+// repinta la tabla para que el <select> y los totales ya estén correctos.
 function pintarSelectPlanesEnNegocios() { if (_negociosActuales.length) pintarNegocios(_negociosActuales); }
 async function guardarNegocio(id) {
   const planId = $(`[data-plan="${id}"]`)?.value || null;
   const impl = $(`[data-impl="${id}"]`)?.checked || false;
-  const payload = { contaclub_plan_id: planId, contaclub_implementacion_pagada: impl };
+  const activo = $(`[data-activo="${id}"]`)?.checked ?? true;
+  const payload = { contaclub_plan_id: planId, contaclub_implementacion_pagada: impl, contaclub_activo: activo };
   // Se guarda la fecha solo la primera vez que pasa a pagada -- los 2
   // meses gratis de Premium se cuentan desde ese día (ver
   // calcular_cobros_contaclub). Si se destilda y se vuelve a marcar por
@@ -214,6 +223,16 @@ async function cargarCobros() {
   const { data } = await supabase.from("contaclub_cobros_mensuales").select("*, aliados(nombre)").order("mes", { ascending: false });
   pintarCobros(data || []);
   pintarMetricasCobros(data || []);
+  // Cuánto genera cada negocio: facturación acumulada de su carta y lo que
+  // de verdad nos ha pagado -- se usa en la tabla de Negocios (arriba).
+  _totalesPorNegocio = new Map();
+  (data || []).forEach(c => {
+    const t = _totalesPorNegocio.get(c.negocio_id) || { facturacion: 0, pagado: 0 };
+    t.facturacion += Number(c.facturacion_total || 0);
+    if (c.estado === "pagado") t.pagado += Number(c.monto_cobro || 0);
+    _totalesPorNegocio.set(c.negocio_id, t);
+  });
+  pintarSelectPlanesEnNegocios();
 }
 function pintarMetricasCobros(cobros) {
   const cont = $("#metricas-cobros");

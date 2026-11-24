@@ -15,7 +15,7 @@
     <a href="index.html" class="cc-brand" style="text-decoration:none">Conta<span>Club</span></a>
     <div class="cc-card">
       <div id="pi-wrap">
-        <h1>Último paso: la implementación</h1>
+        <h1 id="pi-titulo">Último paso: la implementación</h1>
         <p class="cc-sub" id="pi-sub">Configuramos tu carta digital y tu contabilidad por una sola vez.</p>
         <p class="cc-error" id="pi-error" hidden></p>
 
@@ -36,13 +36,13 @@
           <input type="file" id="pi-comprobante" accept="image/*,.pdf">
         </div>
         <button type="button" class="btn btn--primario" id="pi-btn" style="width:100%;justify-content:center">Enviar comprobante</button>
-        <div class="cc-switch"><a href="dashboard.html">La implementación es opcional -- entrar a mi panel sin pagarla por ahora</a></div>
+        <div class="cc-switch" id="pi-omitir-wrap" hidden><a href="dashboard.html">La implementación es opcional -- entrar a mi panel sin pagarla por ahora</a></div>
       </div>
       <div class="cc-exito" id="pi-exito" hidden>
         <div class="cc-exito__check">✓</div>
         <h1 style="text-align:center">¡Listo!</h1>
-        <p>Recibimos tu comprobante. En cuanto lo confirmemos, tu cuenta queda activa -- mientras tanto ya puedes entrar y dejar todo armado.</p>
-        <a href="dashboard.html" class="btn btn--primario" style="width:100%;justify-content:center;margin-top:10px">Entrar a mi panel</a>
+        <p id="pi-exito-texto">Recibimos tu comprobante. En cuanto lo confirmemos, tu cuenta queda activa -- mientras tanto ya puedes entrar y dejar todo armado.</p>
+        <a href="dashboard.html" class="btn btn--primario" id="pi-exito-btn" style="width:100%;justify-content:center;margin-top:10px">Entrar a mi panel</a>
       </div>
     </div>
   </div>
