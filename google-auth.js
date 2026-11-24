@@ -13,7 +13,14 @@ export async function iniciarConGoogle(btn) {
   if (btn) { btn.disabled = true; btn.textContent = "Conectando…"; }
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: `${location.origin}/oauth-callback.html` },
+    options: {
+      redirectTo: `${location.origin}/oauth-callback.html`,
+      // Sin esto, si el navegador ya tiene una sesión de Google activa,
+      // Google se salta el selector de cuenta y entra directo con esa --
+      // acá SIEMPRE puede haber varios negocios probando desde el mismo
+      // navegador, así que hay que forzar que pregunte cuál usar cada vez.
+      queryParams: { prompt: "select_account" },
+    },
   });
   if (error && btn) {
     btn.disabled = false;
