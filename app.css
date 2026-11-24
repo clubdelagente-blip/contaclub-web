@@ -24,6 +24,9 @@ body { background: var(--crema); min-height: 100vh; }
 .cc-error[hidden] { display: none; }
 
 .cc-switch { text-align: center; font-size: 13px; color: var(--tinta-60); margin-top: 18px; }
+
+.cc-divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; font-size: 12px; color: var(--tinta-45); }
+.cc-divider::before, .cc-divider::after { content: ""; flex: 1; height: 1px; background: var(--linea); }
 .cc-switch a { color: var(--verde); font-weight: 600; text-decoration: none; }
 
 .cc-exito { text-align: center; padding: 10px 0; }

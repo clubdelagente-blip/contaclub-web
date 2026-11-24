@@ -6,8 +6,15 @@
    de ESTE dominio (contaclub.online), aislada de la del Club.
    ============================================================ */
 import { supabase } from 'https://elclubdelagente.com/supabase.js';
+import { iniciarConGoogle, botonGoogleHtml } from './google-auth.js';
 
 const $ = (s) => document.querySelector(s);
+
+const googleWrap = $("#google-btn-wrap");
+if (googleWrap) {
+  googleWrap.innerHTML = botonGoogleHtml();
+  $("#btn-google")?.addEventListener("click", (e) => iniciarConGoogle(e.currentTarget));
+}
 
 // Si venía de un registro que quedó pendiente de confirmar el correo
 // (ver registro.js), termina de crear sus filas de perfiles/aliados acá,

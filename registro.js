@@ -8,8 +8,15 @@
    por esa columna).
    ============================================================ */
 import { supabase } from 'https://elclubdelagente.com/supabase.js';
+import { iniciarConGoogle, botonGoogleHtml } from './google-auth.js';
 
 const $ = (s) => document.querySelector(s);
+
+const googleWrap = $("#google-btn-wrap");
+if (googleWrap) {
+  googleWrap.innerHTML = botonGoogleHtml();
+  $("#btn-google")?.addEventListener("click", (e) => iniciarConGoogle(e.currentTarget));
+}
 
 // activo:true a propósito -- "aliados_publico" (la vista que lee la propia
 // carta pública del negocio en Carta.html) solo trae filas con activo=true,
