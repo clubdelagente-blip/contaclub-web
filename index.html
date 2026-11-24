@@ -1,40 +1,297 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ContaClub — Carta digital y contabilidad para tu negocio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://elclubdelagente.com/styles.css?v=143">
-  <link rel="stylesheet" href="app.css?v=6">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ContaClub — carta digital, mesas y contabilidad en un solo lugar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6F2E9;
+    --surface:#FFFFFF;
+    --fg:#17241D;
+    --muted:#5C6C61;
+    --accent:#0E6B52;
+    --accent-ink:#F3FBF7;
+    --accent-soft:#E3EFE7;
+    --highlight:#C97A2E;
+    --highlight-soft:#F6E6D3;
+    --line:rgba(23,36,29,0.14);
+    --shadow:0 18px 40px -22px rgba(23,36,29,0.35);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'Inter',system-ui,sans-serif;
+    padding:28px 20px 64px;
+  }
+  h1,h2,h3{font-family:'Space Grotesk',system-ui,sans-serif;text-wrap:balance;margin:0}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+  p{margin:0;color:var(--fg);line-height:1.55}
+  a{color:inherit}
+  .muted{color:var(--muted)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:13px 22px;font-size:14.5px;font-weight:600;font-family:'Inter',sans-serif;border:1.5px solid transparent;cursor:pointer;text-decoration:none;transition:transform .12s ease, opacity .15s ease}
+  .btn:active{transform:scale(.98)}
+  .btn--primario{background:var(--accent);color:var(--accent-ink)}
+  .btn--primario:hover{opacity:.92}
+  .btn--ghost{background:transparent;border-color:var(--line);color:var(--fg)}
+
+  .nav{display:flex;align-items:center;justify-content:space-between;max-width:760px;margin:0 auto 8px}
+  .brand{font-family:'Space Grotesk';font-weight:700;font-size:19px;text-decoration:none;color:var(--fg)}
+  .brand span{color:var(--accent)}
+
+  .hero{display:flex;flex-direction:column;gap:18px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;width:fit-content;font-family:'IBM Plex Mono';font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:6px 14px}
+  .hero h1{font-size:clamp(34px,8vw,52px);line-height:1.02;letter-spacing:-0.02em}
+  .hero .lede{font-size:18px;max-width:52ch;color:var(--muted)}
+  .hero-stats{display:flex;flex-wrap:wrap;gap:28px;margin-top:4px}
+  .hero-stats div{display:flex;flex-direction:column;gap:2px}
+  .hero-stats .num{font-family:'Space Grotesk';font-size:22px;font-weight:700}
+  .hero-stats .lbl{font-size:12.5px;color:var(--muted)}
+  .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+
+  .sec-head{display:flex;flex-direction:column;gap:6px;margin-bottom:22px}
+  .sec-head .tag{font-family:'IBM Plex Mono';font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--highlight)}
+  .sec-head h2{font-size:clamp(22px,5vw,28px)}
+
+  .problemas{display:grid;gap:14px}
+  .problema{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+  .problema .glyph{font-family:'Space Grotesk';font-weight:700;color:var(--highlight);font-size:14px;flex:none;width:28px;height:28px;border-radius:50%;background:var(--highlight-soft);display:flex;align-items:center;justify-content:center}
+  .problema strong{display:block;font-size:15px;margin-bottom:3px}
+  .problema span{font-size:14px;color:var(--muted)}
+
+  .catgrid{display:flex;flex-direction:column;gap:14px}
+  .catblock{border:1px solid var(--line);border-radius:14px;padding:18px 20px;background:var(--surface);min-width:0}
+  .catblock h3{font-size:16px;margin-bottom:6px}
+  .catblock .lede{font-size:13.5px;color:var(--muted);margin-bottom:10px;max-width:60ch}
+  .catblock ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+  .catblock li{font-size:13.5px;color:var(--fg)}
+  .catblock li::marker{color:var(--accent)}
+  .catblock .kicker{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+
+  .packages{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .package-col{display:flex;flex-direction:column;gap:10px}
+  .plan-head{display:flex;flex-direction:column;gap:3px;text-align:center}
+  .plan-head .plan-name{font-family:'Space Grotesk';font-weight:700;font-size:17px}
+  .plan-head .plan-for{font-size:12px;color:var(--muted)}
+  .recurring-row{display:flex;flex-direction:column;gap:2px;align-items:center;text-align:center;background:var(--accent-soft);border-radius:10px;padding:10px 12px;margin-top:4px}
+  .recurring-row .amt{font-family:'IBM Plex Mono';font-weight:700;color:var(--accent);font-size:15px}
+  .recurring-row .lbl{font-size:11.5px;color:var(--muted)}
+  .decision{border:1.5px dashed var(--accent);border-radius:14px;padding:18px 20px;background:var(--accent-soft);display:flex;flex-direction:column;gap:8px;margin-top:18px}
+  .decision .tag{font-family:'IBM Plex Mono';font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+  .decision p{font-size:13.5px}
+  .decision .calc{font-family:'IBM Plex Mono';font-size:13px;background:var(--surface);border-radius:8px;padding:10px 12px;color:var(--fg)}
+
+  .receipt{width:100%;max-width:420px;background:var(--surface);box-shadow:var(--shadow);padding:28px 26px 8px;position:relative;margin:0 auto}
+  .receipt-edge{height:12px;width:100%;max-width:420px;margin:0 auto;background-image:radial-gradient(circle at 10px 10px, var(--bg) 9px, transparent 10px);background-size:20px 20px;background-repeat:repeat-x}
+  .receipt-edge.top{background-position:top;transform:translateY(1px)}
+  .receipt-edge.bottom{background-position:bottom;transform:translateY(-1px) rotate(180deg)}
+  .receipt h3{font-family:'IBM Plex Mono';font-size:13px;letter-spacing:.06em;text-transform:uppercase;text-align:center;color:var(--muted)}
+  .receipt .brand-name{font-family:'Space Grotesk';font-size:20px;font-weight:700;text-align:center;margin-top:2px}
+  .receipt hr{border:none;border-top:1px dashed var(--line);margin:18px 0}
+  .line-item{display:flex;align-items:baseline;gap:8px;font-size:14px;padding:6px 0}
+  .line-item .desc{flex:1;min-width:0}
+  .line-item .fill{flex:1;border-bottom:1px dotted var(--line);margin:0 2px;transform:translateY(-4px);min-width:12px}
+  .line-item .amt{font-family:'IBM Plex Mono';font-weight:600;white-space:nowrap}
+  .line-item.total .desc, .line-item.total .amt{font-size:16px;font-weight:700;color:var(--accent)}
+  .line-item.total{padding-top:12px}
+  .badge-cero{display:inline-flex;align-items:center;gap:6px;margin-top:14px;font-size:12.5px;font-weight:600;background:var(--accent-soft);color:var(--accent);padding:7px 12px;border-radius:999px}
+  .receipt .note{font-size:12px;color:var(--muted);text-align:center;margin:16px 0 20px;font-family:'IBM Plex Mono'}
+  .receipt .elegir{display:block;text-align:center;margin:0 0 20px}
+
+  .compare-wrap{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow-x:auto}
+  .compare-wrap table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:480px;margin:0}
+  .compare-wrap th,.compare-wrap td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+  .compare-wrap th{font-family:'Space Grotesk';font-size:13px;color:var(--muted);font-weight:600}
+  .compare-wrap td.hl{color:var(--accent);font-weight:700}
+  .compare-wrap tr:last-child td{border-bottom:none}
+  .compare-wrap th:first-child,.compare-wrap td:first-child{padding-left:16px}
+  .compare-wrap th:last-child,.compare-wrap td:last-child{padding-right:16px}
+
+  .timeline{display:flex;flex-direction:column}
+  .fase{display:flex;gap:16px;padding-bottom:26px;position:relative}
+  .fase:last-child{padding-bottom:0}
+  .fase .dot-col{display:flex;flex-direction:column;align-items:center;flex:none}
+  .fase .dot{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-family:'Space Grotesk';font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none}
+  .fase .stem{flex:1;width:1px;background:var(--line);margin-top:4px}
+  .fase .body{padding-top:2px;min-width:0}
+  .fase h3{font-size:15.5px;margin-bottom:3px}
+  .fase .when{font-family:'IBM Plex Mono';font-size:11.5px;color:var(--highlight);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px}
+  .fase p{font-size:13.5px;color:var(--muted)}
+
+  .closing{border:1px solid var(--line);border-radius:16px;padding:26px;background:var(--surface);display:flex;flex-direction:column;gap:10px;text-align:left}
+  .closing h2{font-size:22px}
+  .closing .legal{font-size:12px;color:var(--muted);margin-top:8px}
+
+  @media (max-width:620px){ .packages{grid-template-columns:1fr} }
+  @media (max-width:480px){ .hero-stats{gap:20px} }
+</style>
 </head>
 <body>
-  <div class="cc-wrap" style="max-width:720px">
-    <div class="cc-brand">Conta<span>Club</span></div>
-    <div class="cc-hero" style="padding-top:0">
-      <h1>La carta, las mesas y la caja de tu negocio, en un solo lugar.</h1>
-      <p>Carta digital por QR, mesas compartidas, cobro propio y contabilidad del día a día — sin pagarle comisión a nadie por cada venta.</p>
-    </div>
 
-    <div class="cc-beneficios">
-      <div class="cc-beneficio"><span class="cc-beneficio__ic">🍽️</span><div><b>Carta digital por QR</b><p>Con fotos, toppings, mesas compartidas y publicidad intercalada.</p></div></div>
-      <div class="cc-beneficio"><span class="cc-beneficio__ic">💰</span><div><b>Mi Contabilidad</b><p>Ingresos, gastos y tu utilidad neta real -- con el costo de tus recetas incluido.</p></div></div>
-      <div class="cc-beneficio"><span class="cc-beneficio__ic">🧮</span><div><b>Costos y recetas</b><p>Arma la receta de cada producto (hasta con recetas primarias reutilizables) y mira el margen de cada uno.</p></div></div>
-      <div class="cc-beneficio"><span class="cc-beneficio__ic">🎟️</span><div><b>Sellos y puntos</b><p>Fideliza a tus clientes con una tarjeta de sellos y puntos para sorteos.</p></div></div>
-      <div class="cc-beneficio"><span class="cc-beneficio__ic">🎲</span><div><b>Ruleta de pago al azar</b><p>Un juego divertido para pagar la cuenta en mesas compartidas.</p></div></div>
-      <div class="cc-beneficio"><span class="cc-beneficio__ic">📊</span><div><b>Métricas reales</b><p>Visitas, horas pico y tus productos más vendidos, siempre a la mano.</p></div></div>
-    </div>
+<div class="nav">
+  <a href="index.html" class="brand">Conta<span>Club</span></a>
+  <a href="login.html" class="btn btn--ghost" style="padding:9px 16px;font-size:13px">Iniciar sesión</a>
+</div>
 
-    <h2 class="cc-planes__titulo">Elige tu paquete</h2>
-    <p class="cc-planes__sub">Implementación de pago único -- después, solo tu mensualidad o tu % según el paquete.</p>
-    <div id="planes-lista" class="cc-planes">
-      <p style="text-align:center;color:var(--tinta-45);grid-column:1/-1">Cargando planes…</p>
-    </div>
+<div class="wrap">
 
-    <div class="cc-switch">¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a></div>
-  </div>
-  <script type="module" src="index.js"></script>
+  <section class="hero">
+    <span class="eyebrow">ContaClub</span>
+    <h1>La carta, las mesas y la caja de tu negocio, en un solo lugar.</h1>
+    <p class="lede">Carta digital por QR, mesas compartidas, cobro propio y contabilidad del día a día — sin pagarle comisión a nadie por cada venta.</p>
+    <div class="hero-stats">
+      <div><span class="num mono">2</span><span class="lbl">planes, a tu medida</span></div>
+      <div><span class="num mono">100%</span><span class="lbl">de lo que cobras, para ti</span></div>
+      <div><span class="num mono">1</span><span class="lbl">semana para estar operando</span></div>
+    </div>
+    <div class="hero-cta">
+      <a href="#planes" class="btn btn--primario">Ver planes</a>
+      <a href="registro.html" class="btn btn--ghost">Crear mi cuenta</a>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="tag">El problema</span><h2>Hoy esto se resuelve a mano, o no se resuelve</h2></div>
+    <div class="problemas">
+      <div class="problema"><span class="glyph">1</span><div><strong>Cobrar una mesa compartida es un lío</strong><span>Cuatro personas piden por separado y alguien tiene que sumar todo a mano, a veces mal, antes de cobrar.</span></div></div>
+      <div class="problema"><span class="glyph">2</span><div><strong>Cuadrar caja al final del día toma horas</strong><span>Gastos en papelitos, ingresos en la memoria, y nadie sabe en qué se fue la plata del mes hasta que ya pasó.</span></div></div>
+      <div class="problema"><span class="glyph">3</span><div><strong>Las apps de domicilios se quedan con tu margen</strong><span>Entre el 20% y el 30% de cada pedido se va en comisión antes de que la venta te toque el bolsillo.</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="tag">Qué incluye</span><h2>Esto va mucho más allá de un cuaderno de cuentas</h2>
+      <p class="muted" style="margin-top:4px;max-width:62ch">ContaClub no es solo una app de ingresos y gastos -- es la forma en que tu negocio toma el pedido, lo cobra, lo prepara y lo entrega. La contabilidad es apenas una de siete piezas.</p>
+    </div>
+    <div class="catgrid">
+
+      <div class="catblock">
+        <span class="kicker">Carta digital</span>
+        <h3>La carta que ve tu cliente</h3>
+        <p class="lede">Un QR que abre tu menú real, con fotos, no un PDF ni una lista de texto.</p>
+        <ul>
+          <li>Categorías con color propio, fotos grandes con zoom y toppings/modificadores por producto (tamaños, salsas, adiciones).</li>
+          <li>Personalización de marca: logo, portada y color de acento de tu carta.</li>
+          <li>Productos agotados se marcan solos y dejan de poder pedirse -- nunca vendes algo que no tienes.</li>
+        </ul>
+      </div>
+
+      <div class="catblock">
+        <span class="kicker">Mesas compartidas</span>
+        <h3>Una mesa, una sola cuenta</h3>
+        <p class="lede">Varias personas escanean el mismo QR y cada quien pide lo suyo -- el sistema los une solo.</p>
+        <ul>
+          <li>Tres formas de pagar: cada quien lo suyo, uno paga toda la mesa, o "alguien más paga por mí".</li>
+          <li>Quien paga por todos ve el desglose tipo factura: cada producto, su valor y quién lo pidió -- no un número ciego.</li>
+          <li>El negocio cobra la mesa completa de un clic, sin sumar nada a mano ni duplicar lo que ya pagó alguien por separado.</li>
+        </ul>
+      </div>
+
+      <div class="catblock">
+        <span class="kicker">Cobro y logística</span>
+        <h3>Cobras tú, no un tercero</h3>
+        <p class="lede">El dinero llega directo a tu cuenta -- nadie se queda con un porcentaje en el camino.</p>
+        <ul>
+          <li>Efectivo o transferencia, con tu propia llave de pago (Nequi, Bancolombia, Bre-B) y comprobante adjunto.</li>
+          <li>Recoger en el local o domicilio, con el valor y el tiempo estimado que tú definas.</li>
+          <li>El cliente copia el valor exacto a pagar con un toque -- menos errores de transferencia.</li>
+        </ul>
+      </div>
+
+      <div class="catblock">
+        <span class="kicker">Operación de cocina y mostrador</span>
+        <h3>Cada pedido, bajo control</h3>
+        <p class="lede">El estado del pedido y el estado del pago son cosas distintas -- cada uno se mueve por su lado.</p>
+        <ul>
+          <li>Cinco pasos: Pendiente → Aceptado → En preparación → Listo → Entregado, con folio corto para identificar cada uno.</li>
+          <li>Blindado contra doble clic: nunca se duplica un pedido por tocar "enviar" dos veces en una conexión lenta.</li>
+          <li>"Nuevo pedido" para ventas tomadas en mostrador o con carta física: el mesero ve la carta real y el pedido llega exactamente igual que uno por QR.</li>
+        </ul>
+      </div>
+
+      <div class="catblock">
+        <span class="kicker">Inventario</span>
+        <h3>Sabes qué te queda, sin contar a mano</h3>
+        <p class="lede">El stock se descuenta solo con cada venta confirmada.</p>
+        <ul>
+          <li>Aviso temprano cuando un producto está por agotarse, y bloqueo automático cuando llega a cero.</li>
+          <li>Si cancelas un pedido, el stock se restaura solo -- nunca queda descuadrado.</li>
+        </ul>
+      </div>
+
+      <div class="catblock">
+        <span class="kicker">Fidelización</span>
+        <h3>Clientes que vuelven</h3>
+        <p class="lede">Un programa de sellos sin necesidad de una app ni una tarjeta física.</p>
+        <ul>
+          <li>Cada compra suma un sello por WhatsApp; al llegar a la meta, el cliente recibe el premio que tú definas.</li>
+        </ul>
+      </div>
+
+      <div class="catblock">
+        <span class="kicker">Mi Contabilidad</span>
+        <h3>Y sí, también tus cuentas en orden</h3>
+        <p class="lede">La pieza que mucha gente espera de entrada -- acá es una más de siete, no el producto completo.</p>
+        <ul>
+          <li>Ingresos y gastos por categoría, con gastos recurrentes (arriendo, nómina) que se renuevan solos cada mes.</li>
+          <li>Gráfica de en qué se va la plata, balance con filtros por día/semana/mes/rango y comparación contra el periodo anterior.</li>
+          <li>Cada venta de la carta entra sola al balance apenas se marca pagada -- no hay que digitarla dos veces.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="planes">
+    <div class="sec-head"><span class="tag">Precio</span><h2>Elige el plan según cómo crece tu negocio</h2></div>
+    <div id="planes-lista">
+      <p class="muted" style="text-align:center;padding:20px 0">Cargando planes…</p>
+    </div>
+    <div id="decision-box"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="tag">Contexto de mercado</span><h2>Lo que cuesta resolverlo por partes</h2></div>
+    <div class="compare-wrap">
+      <table>
+        <thead><tr><th>Incluye</th><th>Software contable solo</th><th>Menú QR a la medida</th><th>ContaClub</th></tr></thead>
+        <tbody>
+          <tr><td>Carta digital + mesas</td><td class="muted">No</td><td>Sí</td><td class="hl">Sí</td></tr>
+          <tr><td>Ingresos, gastos y balance</td><td>Sí</td><td class="muted">No</td><td class="hl">Sí</td></tr>
+          <tr><td>Cobro propio sin intermediario</td><td class="muted">No</td><td class="muted">Depende</td><td class="hl">Sí</td></tr>
+          <tr><td>Fidelización por WhatsApp</td><td class="muted">No</td><td class="muted">Rara vez</td><td class="hl">Sí</td></tr>
+          <tr><td>Mensualidad</td><td>$49.000 – $163.900</td><td>Cotización aparte</td><td class="hl">Según el plan que elijas</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="tag">Implementación</span><h2>De la carta en papel a operando, en 4 fases</h2></div>
+    <div class="timeline">
+      <div class="fase"><div class="dot-col"><div class="dot mono">1</div><div class="stem"></div></div><div class="body"><span class="when">Días 1-2</span><h3>Configuración</h3><p>Cargas tu carta: productos, precios, fotos y toppings. Defines tus mesas y se generan sus códigos QR.</p></div></div>
+      <div class="fase"><div class="dot-col"><div class="dot mono">2</div><div class="stem"></div></div><div class="body"><span class="when">Primera semana</span><h3>Puesta en marcha</h3><p>Colocas los QR en las mesas, capacitación corta al personal, y recibes tus primeros pedidos reales.</p></div></div>
+      <div class="fase"><div class="dot-col"><div class="dot mono">3</div><div class="stem"></div></div><div class="body"><span class="when">Semana 2</span><h3>Contabilidad activa</h3><p>Activas Mi Contabilidad: primeros gastos e ingresos, categorías propias y gastos recurrentes como arriendo o nómina.</p></div></div>
+      <div class="fase"><div class="dot-col"><div class="dot mono">4</div></div><div class="body"><span class="when">Mes 1 en adelante</span><h3>Optimización</h3><p>Activas stock, domicilio o recoger, revisas la gráfica de gastos y personalizas colores y marca de tu carta.</p></div></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>¿Lo probamos en tu negocio?</h2>
+    <p class="muted">En menos de una semana puedes tener tu carta digital funcionando y tu primer mes de cuentas en orden.</p>
+    <div style="margin-top:4px"><a href="#planes" class="btn btn--primario">Elegir mi plan</a></div>
+    <p class="legal">El cobro variable (si tu plan lo incluye) se calcula solo sobre los pedidos que pasan y se marcan pagados dentro de la carta digital -- no sobre tus ventas en efectivo por fuera de la plataforma. El detalle por mesa de ContaClub organiza el cobro entre quienes comparten la cuenta -- no reemplaza la facturación electrónica ante la DIAN para negocios que estén obligados a expedirla.</p>
+  </section>
+
+</div>
+
+<script type="module" src="index.js"></script>
 </body>
 </html>
