@@ -2,8 +2,7 @@
    ContaClub — panel admin interno (solo El Club de la Gente, no el
    negocio). Proyecto propio y separado del Admin.html del Club -- esto
    SOLO gestiona negocios de ContaClub (contaclub_standalone=true): sus
-   planes, los cobros mensuales, la publicidad que se intercala en todas
-   sus cartas públicas, y la llave de pago de ContaClub.
+   planes, los cobros mensuales, y la llave de pago de ContaClub.
    Reusa el mismo Supabase (cliente compartido, cargado cruzado) y el
    mismo rol "admin" de perfiles -- el mismo equipo administra los dos
    proyectos, solo que desde paneles distintos.
@@ -40,9 +39,6 @@ async function iniciar() {
   $("#plan-guardar")?.addEventListener("click", guardarPlan);
   $("#plan-cancelar")?.addEventListener("click", resetFormPlan);
   ["plan-implementacion", "plan-mensualidad", "plan-umbral"].forEach(id => formatearInputMoneda($(`#${id}`)));
-  $("#anuncio-guardar")?.addEventListener("click", guardarAnuncio);
-  $("#anuncio-cancelar")?.addEventListener("click", resetFormAnuncio);
-  $("#anuncio-imagen-file")?.addEventListener("change", onElegirImagenAnuncio);
   $("#pago-guardar")?.addEventListener("click", guardarConfigPago);
   $("#pago-qr-url")?.addEventListener("input", pintarPreviewQr);
   $("#soporte-link-copiar")?.addEventListener("click", async () => {
@@ -52,7 +48,7 @@ async function iniciar() {
   });
   $("#soporte-link-cerrar")?.addEventListener("click", () => { $("#soporte-link-wrap").hidden = true; });
 
-  await Promise.all([cargarPlanes(), cargarNegocios(), cargarCobros(), cargarAnuncios(), cargarConfigPago()]);
+  await Promise.all([cargarPlanes(), cargarNegocios(), cargarCobros(), cargarConfigPago()]);
 }
 
 /* ---------- Navegación entre secciones ---------- */
@@ -130,7 +126,7 @@ async function guardarPlan() {
     activo: $("#plan-activo")?.checked ?? true,
   };
   // El "orden" solo se fija al crear -- editar un plan no debe moverlo de
-  // puesto en la landing (mismo patrón que guardarAnuncio).
+  // puesto en la landing.
   if (!id) payload.orden = _planes.length;
   const btn = $("#plan-guardar");
   btn.disabled = true; btn.textContent = "Guardando…";
@@ -303,106 +299,6 @@ function pintarCobros(cobros) {
 async function marcarPagado(id) {
   await supabase.from("contaclub_cobros_mensuales").update({ estado: "pagado", fecha_pago: new Date().toISOString().slice(0, 10) }).eq("id", id);
   await cargarCobros();
-}
-
-/* ---------- Publicidad (anuncios intercalados en todas las cartas de
-   ContaClub) ---------- */
-let _anuncios = [];
-async function cargarAnuncios() {
-  const { data } = await supabase.from("contaclub_anuncios").select("*").order("orden");
-  _anuncios = data || [];
-  pintarAnuncios();
-}
-function pintarAnuncios() {
-  const cont = $("#anuncios-lista");
-  if (!cont) return;
-  if (!_anuncios.length) {
-    cont.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay anuncios creados.</td></tr>`;
-    return;
-  }
-  cont.innerHTML = _anuncios.map(a => `
-    <tr>
-      <td>${a.imagen_url ? `<img src="${esc(a.imagen_url)}" alt="" style="width:44px;height:44px;border-radius:8px;object-fit:cover;display:block">` : "—"}</td>
-      <td>${esc(a.titulo)}</td>
-      <td>${a.activo ? "Sí" : "No"}</td>
-      <td><button type="button" class="btn" data-editar-anuncio="${a.id}" style="padding:6px 12px;font-size:12px">Editar</button></td>
-    </tr>`).join("");
-  $$("[data-editar-anuncio]", cont).forEach(b => b.addEventListener("click", () => cargarAnuncioEnForm(b.dataset.editarAnuncio)));
-}
-function cargarAnuncioEnForm(id) {
-  const a = _anuncios.find(x => x.id === id);
-  if (!a) return;
-  $("#anuncio-id").value = a.id;
-  $("#anuncio-titulo").value = a.titulo || "";
-  $("#anuncio-descripcion").value = a.descripcion || "";
-  $("#anuncio-imagen-url").value = a.imagen_url || "";
-  $("#anuncio-imagen-file").value = "";
-  _anuncioImagenPendiente = null;
-  pintarPreviewImagenAnuncio(a.imagen_url || "");
-  $("#anuncio-link").value = a.link || "";
-  $("#anuncio-activo").checked = !!a.activo;
-  $("#anuncio-form-titulo").textContent = "Editar anuncio";
-  $("#anuncio-cancelar").hidden = false;
-  $("#admin-seccion-publicidad").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-function resetFormAnuncio() {
-  $("#anuncio-id").value = "";
-  ["anuncio-titulo", "anuncio-descripcion", "anuncio-imagen-url", "anuncio-link"].forEach(id => { const el = $(`#${id}`); if (el) el.value = ""; });
-  $("#anuncio-imagen-file").value = "";
-  _anuncioImagenPendiente = null;
-  pintarPreviewImagenAnuncio("");
-  $("#anuncio-activo").checked = true;
-  $("#anuncio-form-titulo").textContent = "Crear anuncio";
-  $("#anuncio-cancelar").hidden = true;
-}
-// La imagen es opcional -- sin ella, el anuncio se ve igual que un aviso
-// propio (fondo degradado, ver avisoSlideHtml en carta.js), solo que
-// marcado "Publicidad" en vez de "Promoción".
-let _anuncioImagenPendiente = null;
-function onElegirImagenAnuncio(e) {
-  const file = e.target.files?.[0];
-  if (!file) return;
-  _anuncioImagenPendiente = file;
-  const reader = new FileReader();
-  reader.onload = () => pintarPreviewImagenAnuncio(reader.result);
-  reader.readAsDataURL(file);
-}
-function pintarPreviewImagenAnuncio(src) {
-  const cont = $("#anuncio-imagen-preview");
-  if (!cont) return;
-  cont.innerHTML = src ? `<img src="${esc(src)}" alt="" style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid var(--linea)">` : "";
-}
-async function guardarAnuncio() {
-  const titulo = $("#anuncio-titulo")?.value.trim();
-  if (!titulo) { alert("Escribe el título"); return; }
-  const btn = $("#anuncio-guardar");
-  btn.disabled = true; btn.textContent = "Guardando…";
-  let imagenUrl = $("#anuncio-imagen-url")?.value.trim() || null;
-  if (_anuncioImagenPendiente) {
-    const ext = (_anuncioImagenPendiente.name.split(".").pop() || "jpg").toLowerCase();
-    const path = `contaclub-anuncio-${Date.now()}-${Math.random().toString(36).substr(2, 5)}.${ext}`;
-    const { error: upErr } = await supabase.storage.from("contenido").upload(path, _anuncioImagenPendiente, { upsert: true });
-    if (upErr) {
-      btn.disabled = false; btn.textContent = "Guardar anuncio";
-      alert("No se pudo subir la imagen: " + upErr.message);
-      return;
-    }
-    imagenUrl = supabase.storage.from("contenido").getPublicUrl(path).data.publicUrl;
-  }
-  const payload = {
-    titulo, imagen_url: imagenUrl,
-    descripcion: $("#anuncio-descripcion")?.value.trim() || null,
-    link: $("#anuncio-link")?.value.trim() || null,
-    activo: $("#anuncio-activo")?.checked ?? true,
-  };
-  const id = $("#anuncio-id")?.value;
-  const { error } = id
-    ? await supabase.from("contaclub_anuncios").update(payload).eq("id", id)
-    : await supabase.from("contaclub_anuncios").insert({ ...payload, orden: _anuncios.length });
-  btn.disabled = false; btn.textContent = "Guardar anuncio";
-  if (error) { alert("No se pudo guardar: " + error.message); return; }
-  resetFormAnuncio();
-  await cargarAnuncios();
 }
 
 /* ---------- Llave de pago (config global, una sola fila) ---------- */
