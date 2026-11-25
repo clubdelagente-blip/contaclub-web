@@ -8,7 +8,7 @@
    mismo rol "admin" de perfiles -- el mismo equipo administra los dos
    proyectos, solo que desde paneles distintos.
    ============================================================ */
-import { supabase } from 'https://elclubdelagente.com/supabase.js';
+import { supabase, SUPABASE_URL } from 'https://elclubdelagente.com/supabase.js';
 
 const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
@@ -45,6 +45,12 @@ async function iniciar() {
   $("#anuncio-imagen-file")?.addEventListener("change", onElegirImagenAnuncio);
   $("#pago-guardar")?.addEventListener("click", guardarConfigPago);
   $("#pago-qr-url")?.addEventListener("input", pintarPreviewQr);
+  $("#soporte-link-copiar")?.addEventListener("click", async () => {
+    const url = $("#soporte-link-url");
+    url.select();
+    try { await navigator.clipboard.writeText(url.value); } catch { document.execCommand("copy"); }
+  });
+  $("#soporte-link-cerrar")?.addEventListener("click", () => { $("#soporte-link-wrap").hidden = true; });
 
   await Promise.all([cargarPlanes(), cargarNegocios(), cargarCobros(), cargarAnuncios(), cargarConfigPago()]);
 }
@@ -141,7 +147,7 @@ async function guardarPlan() {
 async function cargarNegocios() {
   const [{ data }, { data: visitas }] = await Promise.all([
     supabase.from("aliados")
-      .select("id, nombre, whatsapp, contaclub_plan_id, contaclub_activo, contaclub_implementacion_pagada, contaclub_implementacion_comprobante_url")
+      .select("id, user_id, nombre, whatsapp, contaclub_plan_id, contaclub_activo, contaclub_implementacion_pagada, contaclub_implementacion_comprobante_url")
       .eq("contaclub_standalone", true).order("nombre"),
     supabase.rpc("contaclub_visitas_por_negocio"),
   ]);
@@ -158,7 +164,7 @@ function pintarNegocios(negocios) {
   const cont = $("#negocios-lista");
   if (!cont) return;
   if (!negocios.length) {
-    cont.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay negocios de ContaClub registrados.</td></tr>`;
+    cont.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--tinta-45)">Todavía no hay negocios de ContaClub registrados.</td></tr>`;
     return;
   }
   cont.innerHTML = negocios.map(n => {
@@ -181,11 +187,13 @@ function pintarNegocios(negocios) {
       <td style="text-align:right">${COP(t?.pagado || 0)}</td>
       <td style="text-align:right">${nf.format(v?.visitas_30d || 0)}</td>
       <td style="text-align:right">${nf.format(v?.visitas_total || 0)}</td>
+      <td><button type="button" class="btn" data-entrar="${n.user_id}" data-entrar-nombre="${esc(n.nombre)}" style="padding:6px 12px;font-size:12px">Entrar</button></td>
     </tr>`;
   }).join("");
   $$("[data-plan]", cont).forEach(sel => sel.addEventListener("change", () => guardarNegocio(sel.dataset.plan)));
   $$("[data-impl]", cont).forEach(chk => chk.addEventListener("change", () => guardarNegocio(chk.dataset.impl)));
   $$("[data-activo]", cont).forEach(chk => chk.addEventListener("change", () => guardarNegocio(chk.dataset.activo)));
+  $$("[data-entrar]", cont).forEach(btn => btn.addEventListener("click", () => entrarComoNegocio(btn.dataset.entrar, btn.dataset.entrarNombre, btn)));
 }
 // Si los planes/cobros llegan o cambian después de pintar negocios, se
 // repinta la tabla para que el <select> y los totales ya estén correctos.
@@ -203,6 +211,36 @@ async function guardarNegocio(id) {
   if (impl && !anterior?.contaclub_implementacion_pagada) payload.contaclub_implementacion_pagada_en = new Date().toISOString();
   await supabase.from("aliados").update(payload).eq("id", id);
   await cargarNegocios();
+}
+
+// "Entrar como" un negocio -- genera un link de acceso de un solo uso vía
+// la Edge Function entrar-como-negocio (verifica ahí mismo que quien lo pide
+// sea admin, con la llave service_role que nunca toca el navegador). El
+// link se muestra para copiar, nunca se abre solo -- abrirlo en una pestaña
+// normal del mismo navegador reemplazaría la sesión de Admin con la del
+// negocio, porque ambas viven en el mismo localStorage.
+async function entrarComoNegocio(userId, nombre, btn) {
+  if (btn) { btn.disabled = true; btn.textContent = "…"; }
+  const { data: { session } } = await supabase.auth.getSession();
+  let data = {};
+  try {
+    const resp = await fetch(`${SUPABASE_URL}/functions/v1/entrar-como-negocio`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+      body: JSON.stringify({ negocio_user_id: userId }),
+    });
+    data = await resp.json().catch(() => ({}));
+    if (!resp.ok || !data.link) throw new Error(data.error || `Error ${resp.status}`);
+  } catch (e) {
+    alert("No se pudo generar el acceso: " + e.message);
+    if (btn) { btn.disabled = false; btn.textContent = "Entrar"; }
+    return;
+  }
+  if (btn) { btn.disabled = false; btn.textContent = "Entrar"; }
+  $("#soporte-link-nombre").textContent = data.nombre || nombre;
+  $("#soporte-link-url").value = data.link;
+  $("#soporte-link-wrap").hidden = false;
+  $("#soporte-link-wrap").scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 /* ---------- Cobros mensuales ---------- */

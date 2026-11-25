@@ -66,9 +66,19 @@
           <p class="cc-sub">Asigna el plan de cada negocio, actívalo cuando apruebes su primer pago, y marca si ya pagó la implementación (pago único, desbloquea Costos).</p>
           <div class="cc-tabla-wrap">
             <table class="cc-tabla">
-              <thead><tr><th>Negocio</th><th>WhatsApp</th><th>Plan</th><th>Comprobante</th><th style="text-align:center">Cuenta activa</th><th style="text-align:center">Implementación pagada</th><th style="text-align:right">Facturación total</th><th style="text-align:right">Generado (pagado)</th><th style="text-align:right">Visualizaciones (30d)</th><th style="text-align:right">Total</th></tr></thead>
-              <tbody id="negocios-lista"><tr><td colspan="10" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
+              <thead><tr><th>Negocio</th><th>WhatsApp</th><th>Plan</th><th>Comprobante</th><th style="text-align:center">Cuenta activa</th><th style="text-align:center">Implementación pagada</th><th style="text-align:right">Facturación total</th><th style="text-align:right">Generado (pagado)</th><th style="text-align:right">Visualizaciones (30d)</th><th style="text-align:right">Total</th><th></th></tr></thead>
+              <tbody id="negocios-lista"><tr><td colspan="11" style="text-align:center;padding:20px;color:var(--tinta-45)">Cargando…</td></tr></tbody>
             </table>
+          </div>
+        </div>
+
+        <div class="cc-card" id="soporte-link-wrap" style="margin-bottom:22px" hidden>
+          <h1>Acceso de soporte -- <span id="soporte-link-nombre"></span></h1>
+          <p class="cc-sub">Ábrelo en una ventana de <strong>incógnito/privada</strong> (no en una pestaña normal) -- si lo abres en una pestaña normal del mismo navegador, reemplaza tu propia sesión de Admin ahí mismo. Es de un solo uso y vence pronto.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input type="text" id="soporte-link-url" readonly style="flex:1;min-width:220px;padding:10px 12px;border:1px solid var(--linea-fuerte);border-radius:8px;font-size:12px">
+            <button type="button" class="btn btn--primario" id="soporte-link-copiar">Copiar link</button>
+            <button type="button" class="btn" id="soporte-link-cerrar">Cerrar</button>
           </div>
         </div>
 
@@ -171,6 +181,6 @@
     </main>
   </div>
 
-  <script type="module" src="admin.js?v=7"></script>
+  <script type="module" src="admin.js?v=8"></script>
 </body>
 </html>
